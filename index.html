@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Algorithm Lab</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      color: #222;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 40px 20px;
+    }
+
+    .lab {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 30px;
+    }
+
+    h1 {
+      margin-top: 0;
+    }
+
+    .status {
+      margin-top: 20px;
+      padding: 15px;
+      background: #eef7ee;
+      border-radius: 8px;
+    }
+
+    button {
+      padding: 10px 18px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="lab">
+
+    <h1>Algorithm Lab</h1>
+
+    <p>
+      Laboratorio experimental de programación por bloques.
+    </p>
+
+    <button onclick="testLab()">
+      Probar aplicación
+    </button>
+
+    <div class="status" id="status">
+      Esperando ejecución...
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+function testLab() {
+
+  document.getElementById("status").innerHTML =
+    "✓ La aplicación está ejecutando JavaScript correctamente.";
+
+}
+
+</script>
+
+</body>
+</html>
