@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +9,7 @@
   <!-- Blockly -->
   <script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
   <script src="https://unpkg.com/blockly/blocks_compressed.js"></script>
+  <script src="https://unpkg.com/blockly/javascript_compressed.js"></script>
   <script src="https://unpkg.com/blockly/msg/en.js"></script>
 
   <style>
@@ -30,6 +31,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 20px;
     }
 
     header h1 {
@@ -46,6 +48,17 @@
       padding: 20px;
     }
 
+    .workspace-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 16px;
+    }
+
+    .workspace-panel,
+    .console-panel {
+      min-width: 0;
+    }
+
     #blocklyDiv {
       width: 100%;
       height: 600px;
@@ -55,10 +68,89 @@
       overflow: hidden;
     }
 
-    .footer {
+    .console-panel {
+      background: #202124;
+      color: #f1f3f4;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      min-height: 600px;
+      overflow: hidden;
+    }
+
+    .console-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid #3c4043;
+      font-size: 13px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+
+    #consoleOutput {
+      padding: 16px;
+      flex: 1;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 15px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .console-placeholder {
+      color: #9aa0a6;
+    }
+
+    .controls {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    button {
+      border: 1px solid #dadce0;
+      background: white;
+      color: #202124;
+      border-radius: 7px;
+      padding: 10px 18px;
+      min-height: 42px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #f1f3f4;
+    }
+
+    #runButton {
+      background: #1a73e8;
+      color: white;
+      border-color: #1a73e8;
+    }
+
+    #runButton:hover {
+      background: #1765cc;
+    }
+
+    .status {
       margin-top: 12px;
       font-size: 13px;
       color: #5f6368;
+      min-height: 20px;
+    }
+
+    @media (max-width: 850px) {
+      .workspace-layout {
+        grid-template-columns: 1fr;
+      }
+
+      #blocklyDiv {
+        height: 520px;
+      }
+
+      .console-panel {
+        min-height: 220px;
+      }
     }
   </style>
 </head>
@@ -72,15 +164,43 @@
 
 <div class="lab-container">
 
-  <div id="blocklyDiv"></div>
+  <div class="workspace-layout">
 
-  <div class="footer">
-    Build your algorithm using the available blocks.
+    <div class="workspace-panel">
+      <div id="blocklyDiv"></div>
+    </div>
+
+    <div class="console-panel">
+      <div class="console-header">
+        CONSOLE
+      </div>
+
+      <div id="consoleOutput">
+        <span class="console-placeholder">Ready.</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="controls">
+    <button id="runButton">▶ Run</button>
+    <button id="clearButton">Clear console</button>
+    <button id="resetButton">↻ Reset workspace</button>
+  </div>
+
+  <div class="status" id="status">
+    Build an algorithm and press Run.
   </div>
 
 </div>
 
 <script>
+
+  /*
+   * -------------------------------------------------------
+   * TOOLBOX
+   * -------------------------------------------------------
+   */
 
   const toolbox = {
     kind: "categoryToolbox",
@@ -190,6 +310,12 @@
   };
 
 
+  /*
+   * -------------------------------------------------------
+   * WORKSPACE
+   * -------------------------------------------------------
+   */
+
   const workspace = Blockly.inject(
     "blocklyDiv",
     {
@@ -215,6 +341,204 @@
       }
     }
   );
+
+
+  /*
+   * -------------------------------------------------------
+   * CONSOLE
+   * -------------------------------------------------------
+   */
+
+  const consoleOutput =
+    document.getElementById("consoleOutput");
+
+  const status =
+    document.getElementById("status");
+
+
+  function clearConsole() {
+
+    consoleOutput.textContent = "";
+
+  }
+
+
+  function writeConsole(value) {
+
+    const line = document.createElement("div");
+
+    line.textContent = "> " + String(value);
+
+    consoleOutput.appendChild(line);
+
+  }
+
+
+  /*
+   * -------------------------------------------------------
+   * BLOCKLY PRINT
+   * -------------------------------------------------------
+   *
+   * Blockly's text_print block normally generates alert().
+   *
+   * We replace that behavior so "print" writes to our
+   * own console instead.
+   *
+   * -------------------------------------------------------
+   */
+
+  javascript.javascriptGenerator.forBlock["text_print"] =
+    function(block, generator) {
+
+      const value =
+        generator.valueToCode(
+          block,
+          "TEXT",
+          javascript.Order.NONE
+        ) || "''";
+
+      return "printToLab(" + value + ");\n";
+
+    };
+
+
+  /*
+   * -------------------------------------------------------
+   * EXECUTION
+   * -------------------------------------------------------
+   */
+
+  function runProgram() {
+
+    clearConsole();
+
+    status.textContent = "Running...";
+
+    try {
+
+      const code =
+        javascript.javascriptGenerator.workspaceToCode(
+          workspace
+        );
+
+      /*
+       * Temporary execution method.
+       *
+       * This is useful while developing the first prototype.
+       * In the next phase we will replace this with guarded
+       * execution so WHILE loops cannot freeze the page.
+       */
+
+      const execute =
+        new Function(
+          "printToLab",
+          '"use strict";\n' + code
+        );
+
+      execute(writeConsole);
+
+      if (consoleOutput.textContent.trim() === "") {
+
+        const message =
+          document.createElement("div");
+
+        message.className = "console-placeholder";
+
+        message.textContent =
+          "Program finished with no output.";
+
+        consoleOutput.appendChild(message);
+
+      }
+
+      status.textContent =
+        "Execution completed.";
+
+    }
+
+    catch (error) {
+
+      clearConsole();
+
+      const message =
+        document.createElement("div");
+
+      message.textContent =
+        "ERROR: " + error.message;
+
+      consoleOutput.appendChild(message);
+
+      status.textContent =
+        "Execution failed.";
+
+    }
+
+  }
+
+
+  /*
+   * -------------------------------------------------------
+   * BUTTONS
+   * -------------------------------------------------------
+   */
+
+  document
+    .getElementById("runButton")
+    .addEventListener(
+      "click",
+      runProgram
+    );
+
+
+  document
+    .getElementById("clearButton")
+    .addEventListener(
+      "click",
+      function() {
+
+        clearConsole();
+
+        const message =
+          document.createElement("span");
+
+        message.className =
+          "console-placeholder";
+
+        message.textContent =
+          "Console cleared.";
+
+        consoleOutput.appendChild(message);
+
+      }
+    );
+
+
+  document
+    .getElementById("resetButton")
+    .addEventListener(
+      "click",
+      function() {
+
+        workspace.clear();
+
+        clearConsole();
+
+        const message =
+          document.createElement("span");
+
+        message.className =
+          "console-placeholder";
+
+        message.textContent =
+          "Ready.";
+
+        consoleOutput.appendChild(message);
+
+        status.textContent =
+          "Workspace reset.";
+
+      }
+    );
 
 </script>
 
