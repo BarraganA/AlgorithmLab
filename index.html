@@ -4,18 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Algorithm Lab v0.6</title>
+  <title>Algorithm Lab v0.6.1</title>
 
-  <!-- =====================================================
-       BLOCKLY
-       ===================================================== -->
-
+  <!-- BLOCKLY -->
   <script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
   <script src="https://unpkg.com/blockly/blocks_compressed.js"></script>
   <script src="https://unpkg.com/blockly/javascript_compressed.js"></script>
 
   <style>
-
     * {
       box-sizing: border-box;
     }
@@ -31,11 +27,9 @@
       background: #ffffff;
       border-bottom: 1px solid #dadce0;
       padding: 14px 22px;
-
       display: flex;
       justify-content: space-between;
       align-items: center;
-
       gap: 20px;
       flex-wrap: wrap;
     }
@@ -70,13 +64,12 @@
       background: transparent;
       padding: 7px 11px;
       border-radius: 6px;
-      min-height: auto;
       font-weight: bold;
       cursor: pointer;
     }
 
     .language-selector button.active {
-      background: white;
+      background: #ffffff;
       color: #1a73e8;
       box-shadow: 0 1px 3px rgba(0,0,0,.15);
     }
@@ -99,33 +92,26 @@
     #blocklyDiv {
       width: 100%;
       height: 620px;
-
-      background: white;
+      background: #ffffff;
       border: 1px solid #dadce0;
       border-radius: 10px;
-
       overflow: hidden;
     }
 
     .console-panel {
       min-width: 0;
       min-height: 620px;
-
       background: #202124;
       color: #f1f3f4;
-
       border-radius: 10px;
-
       display: flex;
       flex-direction: column;
-
       overflow: hidden;
     }
 
     .console-header {
       padding: 14px 16px;
       border-bottom: 1px solid #3c4043;
-
       font-size: 13px;
       font-weight: bold;
       letter-spacing: .5px;
@@ -133,13 +119,10 @@
 
     #consoleOutput {
       flex: 1;
-
       padding: 16px;
-
       font-family: Consolas, "Courier New", monospace;
       font-size: 14px;
       line-height: 1.6;
-
       white-space: pre-wrap;
       overflow-wrap: anywhere;
       overflow-y: auto;
@@ -159,27 +142,22 @@
 
     .controls {
       margin-top: 14px;
-
       display: flex;
       flex-wrap: wrap;
-
       gap: 10px;
+      align-items: center;
     }
 
     .control-button {
       border: 1px solid #dadce0;
-      background: white;
+      background: #ffffff;
       color: #202124;
-
       border-radius: 7px;
-
       padding: 10px 18px;
-
       min-height: 42px;
-
       font-size: 14px;
-
       cursor: pointer;
+      font-weight: 500;
     }
 
     .control-button:hover {
@@ -189,7 +167,7 @@
     #runButton {
       background: #1a73e8;
       border-color: #1a73e8;
-      color: white;
+      color: #ffffff;
     }
 
     #runButton:hover {
@@ -199,35 +177,37 @@
     #evidenceButton {
       background: #188038;
       border-color: #188038;
-      color: white;
+      color: #ffffff;
+      margin-left: auto;
     }
 
     #evidenceButton:hover {
       background: #137333;
     }
 
+    #evidenceButton:disabled,
+    #runButton:disabled {
+      opacity: .55;
+      cursor: wait;
+    }
+
     .status-row {
       margin-top: 12px;
-
       display: flex;
       justify-content: space-between;
       flex-wrap: wrap;
-
       gap: 8px;
-
       font-size: 13px;
       color: #5f6368;
     }
 
     #loadingMessage {
       padding: 40px;
-
       text-align: center;
       color: #5f6368;
     }
 
     @media (max-width: 850px) {
-
       .workspace-layout {
         grid-template-columns: 1fr;
       }
@@ -240,66 +220,32 @@
         min-height: 220px;
       }
 
+      #evidenceButton {
+        margin-left: 0;
+      }
     }
-
   </style>
 </head>
 
-
 <body>
 
-<!-- =====================================================
-     HEADER
-     ===================================================== -->
-
 <header>
-
   <div class="title-group">
-
-    <h1>
-      Algorithm Lab
-    </h1>
-
-    <p id="subtitle">
-      Build, test and explore algorithms using blocks.
-    </p>
-
+    <h1>Algorithm Lab</h1>
+    <p id="subtitle"></p>
   </div>
-
 
   <div class="header-right">
-
     <div class="language-selector">
-
-      <button
-        id="langES"
-        type="button"
-      >
-        ES
-      </button>
-
-      <button
-        id="langEN"
-        type="button"
-      >
-        EN
-      </button>
-
+      <button id="langES" type="button">ES</button>
+      <button id="langEN" type="button">EN</button>
     </div>
-
 
     <div class="version">
-      v0.6
+      v0.6.1
     </div>
-
   </div>
-
 </header>
-
-
-<!-- =====================================================
-     LAB
-     ===================================================== -->
 
 <div class="lab-container">
 
@@ -307,16 +253,11 @@
     Loading Algorithm Lab...
   </div>
 
-
-  <div
-    id="labInterface"
-    style="display:none;"
-  >
+  <div id="labInterface" style="display:none;">
 
     <div class="workspace-layout">
 
       <div id="blocklyDiv"></div>
-
 
       <div class="console-panel">
 
@@ -327,15 +268,11 @@
           CONSOLE
         </div>
 
-
         <div id="consoleOutput"></div>
 
       </div>
 
     </div>
-
-
-    <!-- CONTROLS -->
 
     <div class="controls">
 
@@ -347,7 +284,6 @@
         ▶ Run
       </button>
 
-
       <button
         id="clearButton"
         class="control-button"
@@ -356,7 +292,6 @@
         Clear console
       </button>
 
-
       <button
         id="resetButton"
         class="control-button"
@@ -364,7 +299,6 @@
       >
         ↻ Reset workspace
       </button>
-
 
       <button
         id="evidenceButton"
@@ -375,9 +309,6 @@
       </button>
 
     </div>
-
-
-    <!-- STATUS -->
 
     <div class="status-row">
 
@@ -391,7 +322,6 @@
 
 </div>
 
-
 <script>
 
 /* =========================================================
@@ -400,8 +330,11 @@
 
 const MAX_OPERATIONS = 10000;
 
-const STORAGE_KEY =
-  "algorithmLabTemporaryWorkspace";
+const WORKSPACE_STORAGE_KEY =
+  "algorithmLabWorkspace";
+
+const EXECUTION_STORAGE_KEY =
+  "algorithmLabExecution";
 
 
 /* =========================================================
@@ -413,23 +346,19 @@ const params =
     window.location.search
   );
 
-
 let currentLanguage =
   params.get("lang") || "en";
-
 
 if (
   currentLanguage !== "es" &&
   currentLanguage !== "en"
 ) {
-
   currentLanguage = "en";
-
 }
 
 
 /* =========================================================
-   UI TRANSLATIONS
+   TRANSLATIONS
    ========================================================= */
 
 const UI = {
@@ -454,11 +383,11 @@ const UI = {
     evidence:
       "↓ Generate Evidence",
 
-    ready:
-      "Ready.",
-
     instruction:
       "Build an algorithm and press Run.",
+
+    ready:
+      "Ready.",
 
     running:
       "Running...",
@@ -508,6 +437,9 @@ const UI = {
     evidenceError:
       "Could not generate evidence.",
 
+    emptyWorkspace:
+      "The workspace is empty.",
+
     algorithm:
       "ALGORITHM",
 
@@ -538,11 +470,14 @@ const UI = {
     generated:
       "Generated",
 
+    algorithmEvidence:
+      "Algorithm Evidence",
+
     notExecuted:
       "Program has not been executed.",
 
-    algorithmEvidence:
-      "Algorithm Evidence"
+    lastExecution:
+      "Last execution"
 
   },
 
@@ -567,11 +502,11 @@ const UI = {
     evidence:
       "↓ Generar evidencia",
 
-    ready:
-      "Listo.",
-
     instruction:
       "Construye un algoritmo y presiona Ejecutar.",
+
+    ready:
+      "Listo.",
 
     running:
       "Ejecutando...",
@@ -621,6 +556,9 @@ const UI = {
     evidenceError:
       "No fue posible generar la evidencia.",
 
+    emptyWorkspace:
+      "El espacio de trabajo está vacío.",
+
     algorithm:
       "ALGORITMO",
 
@@ -651,82 +589,74 @@ const UI = {
     generated:
       "Generado",
 
+    algorithmEvidence:
+      "Evidencia de algoritmo",
+
     notExecuted:
       "El programa todavía no ha sido ejecutado.",
 
-    algorithmEvidence:
-      "Evidencia de algoritmo"
+    lastExecution:
+      "Última ejecución"
 
   }
 
 };
-
 
 const T =
   UI[currentLanguage];
 
 
 /* =========================================================
-   STATIC UI
+   STATIC INTERFACE
    ========================================================= */
 
 document.documentElement.lang =
   currentLanguage;
-
 
 document.getElementById(
   "subtitle"
 ).textContent =
   T.subtitle;
 
-
 document.getElementById(
   "consoleTitle"
 ).textContent =
   T.console;
-
 
 document.getElementById(
   "runButton"
 ).textContent =
   T.run;
 
-
 document.getElementById(
   "clearButton"
 ).textContent =
   T.clear;
-
 
 document.getElementById(
   "resetButton"
 ).textContent =
   T.reset;
 
-
 document.getElementById(
   "evidenceButton"
 ).textContent =
   T.evidence;
-
 
 document.getElementById(
   "operationLimit"
 ).textContent =
   T.maximum;
 
-
 document.getElementById(
   "status"
 ).textContent =
   T.instruction;
 
-
 document.getElementById(
   "loadingMessage"
 ).textContent =
   T.loading;
-
 
 document.getElementById(
   "langES"
@@ -734,7 +664,6 @@ document.getElementById(
   "active",
   currentLanguage === "es"
 );
-
 
 document.getElementById(
   "langEN"
@@ -745,7 +674,21 @@ document.getElementById(
 
 
 /* =========================================================
-   BLOCKLY LANGUAGE
+   GLOBAL STATE
+   ========================================================= */
+
+let workspace = null;
+
+let lastExecution = {
+  executed: false,
+  output: "",
+  operations: 0,
+  success: false
+};
+
+
+/* =========================================================
+   LOAD BLOCKLY LANGUAGE
    ========================================================= */
 
 const languageScript =
@@ -753,18 +696,13 @@ const languageScript =
     "script"
   );
 
-
 languageScript.src =
   currentLanguage === "es"
-
     ? "https://unpkg.com/blockly/msg/es.js"
-
     : "https://unpkg.com/blockly/msg/en.js";
-
 
 languageScript.onload =
   initializeLab;
-
 
 languageScript.onerror =
   function() {
@@ -776,74 +714,44 @@ languageScript.onerror =
 
   };
 
-
 document.head.appendChild(
   languageScript
 );
 
 
 /* =========================================================
-   GLOBAL STATE
-   ========================================================= */
-
-let workspace = null;
-
-
-let lastExecution = {
-
-  executed: false,
-
-  output: "",
-
-  operations: 0,
-
-  success: false
-
-};
-
-
-/* =========================================================
-   INITIALIZE
+   INITIALIZE LAB
    ========================================================= */
 
 function initializeLab() {
 
-
   const categoryNames = {
 
     en: {
-
       logic: "Logic",
       loops: "Loops",
       math: "Math",
       variables: "Variables",
       functions: "Functions",
       text: "Text / Output"
-
     },
 
-
     es: {
-
       logic: "Lógica",
       loops: "Ciclos",
       math: "Matemáticas",
       variables: "Variables",
       functions: "Funciones",
       text: "Texto / Salida"
-
     }
 
   };
-
 
   const C =
     categoryNames[currentLanguage];
 
 
-  /* -------------------------------------------------------
-     TOOLBOX
-     ------------------------------------------------------- */
+  /* TOOLBOX */
 
   const toolbox = {
 
@@ -851,17 +759,10 @@ function initializeLab() {
 
     contents: [
 
-
-      /* LOGIC */
-
       {
-
         kind: "category",
-
         name: C.logic,
-
-        categorystyle:
-          "logic_category",
+        categorystyle: "logic_category",
 
         contents: [
 
@@ -901,20 +802,13 @@ function initializeLab() {
           }
 
         ]
-
       },
 
 
-      /* LOOPS */
-
       {
-
         kind: "category",
-
         name: C.loops,
-
-        categorystyle:
-          "loop_category",
+        categorystyle: "loop_category",
 
         contents: [
 
@@ -944,20 +838,13 @@ function initializeLab() {
           }
 
         ]
-
       },
 
 
-      /* MATH */
-
       {
-
         kind: "category",
-
         name: C.math,
-
-        categorystyle:
-          "math_category",
+        categorystyle: "math_category",
 
         contents: [
 
@@ -1017,54 +904,29 @@ function initializeLab() {
           }
 
         ]
-
       },
 
 
-      /* VARIABLES */
-
       {
-
         kind: "category",
-
         name: C.variables,
-
-        categorystyle:
-          "variable_category",
-
-        custom:
-          "VARIABLE"
-
+        categorystyle: "variable_category",
+        custom: "VARIABLE"
       },
 
 
-      /* FUNCTIONS */
-
       {
-
         kind: "category",
-
         name: C.functions,
-
-        categorystyle:
-          "procedure_category",
-
-        custom:
-          "PROCEDURE"
-
+        categorystyle: "procedure_category",
+        custom: "PROCEDURE"
       },
 
 
-      /* TEXT / OUTPUT */
-
       {
-
         kind: "category",
-
         name: C.text,
-
-        categorystyle:
-          "text_category",
+        categorystyle: "text_category",
 
         contents: [
 
@@ -1094,7 +956,6 @@ function initializeLab() {
           }
 
         ]
-
       }
 
     ]
@@ -1102,17 +963,12 @@ function initializeLab() {
   };
 
 
-  /* -------------------------------------------------------
-     WORKSPACE
-     ------------------------------------------------------- */
+  /* CREATE WORKSPACE */
 
   workspace =
     Blockly.inject(
-
       "blocklyDiv",
-
       {
-
         toolbox: toolbox,
 
         trashcan: true,
@@ -1120,41 +976,28 @@ function initializeLab() {
         scrollbars: true,
 
         move: {
-
           scrollbars: true,
           drag: true,
           wheel: true
-
         },
 
         zoom: {
-
           controls: true,
           wheel: true,
-
           startScale: 1,
-
           maxScale: 2,
-
           minScale: 0.5,
-
           scaleSpeed: 1.2
-
         }
-
       }
-
     );
 
 
-  /* -------------------------------------------------------
-     CUSTOM PRINT
-     ------------------------------------------------------- */
+  /* CUSTOM PRINT */
 
   javascript
     .javascriptGenerator
     .forBlock["text_print"] =
-
     function(
       block,
       generator
@@ -1162,72 +1005,63 @@ function initializeLab() {
 
       const value =
         generator.valueToCode(
-
           block,
-
           "TEXT",
-
           javascript.Order.NONE
-
         ) || "''";
 
-
       return (
-
         "printToLab(" +
         value +
         ");\n"
-
       );
 
     };
 
 
-  /* -------------------------------------------------------
-     OPERATION PROTECTION
-     ------------------------------------------------------- */
+  /* OPERATION COUNTER */
 
   javascript
     .javascriptGenerator
     .STATEMENT_PREFIX =
-
       "checkOperation();\n";
 
 
-  restoreTemporaryWorkspace();
+  restoreWorkspace();
+  restoreExecution();
 
-
-  /* -------------------------------------------------------
-     SHOW LAB
-     ------------------------------------------------------- */
 
   document.getElementById(
     "loadingMessage"
   ).style.display =
     "none";
 
-
   document.getElementById(
     "labInterface"
   ).style.display =
     "block";
-
 
   Blockly.svgResize(
     workspace
   );
 
 
-  clearConsole();
+  if (
+    lastExecution.executed
+  ) {
 
+    restoreConsoleFromExecution();
 
-  addConsoleLine(
+  } else {
 
-    T.ready,
+    clearConsole();
 
-    "console-placeholder"
+    addConsoleLine(
+      T.ready,
+      "console-placeholder"
+    );
 
-  );
+  }
 
 }
 
@@ -1244,8 +1078,7 @@ const consoleOutput =
 
 function clearConsole() {
 
-  consoleOutput.textContent =
-    "";
+  consoleOutput.textContent = "";
 
 }
 
@@ -1260,18 +1093,13 @@ function addConsoleLine(
       "div"
     );
 
-
   line.textContent =
     text;
 
-
   if (className) {
-
     line.className =
       className;
-
   }
-
 
   consoleOutput.appendChild(
     line
@@ -1283,10 +1111,38 @@ function addConsoleLine(
 function writeConsole(value) {
 
   addConsoleLine(
+    "> " + String(value)
+  );
 
-    "> " +
-    String(value)
+}
 
+
+function restoreConsoleFromExecution() {
+
+  clearConsole();
+
+  if (
+    !lastExecution.output
+  ) {
+
+    addConsoleLine(
+      T.noOutput,
+      "console-placeholder"
+    );
+
+    return;
+
+  }
+
+  const lines =
+    lastExecution.output.split(
+      "\n"
+    );
+
+  lines.forEach(
+    line => {
+      addConsoleLine(line);
+    }
   );
 
 }
@@ -1298,24 +1154,19 @@ function writeConsole(value) {
 
 function runProgram() {
 
-
   clearConsole();
-
 
   document.getElementById(
     "status"
   ).textContent =
     T.running;
 
-
   let operations = 0;
 
 
   function checkOperation() {
 
-
     operations++;
-
 
     if (
       operations >
@@ -1333,7 +1184,6 @@ function runProgram() {
 
   try {
 
-
     const code =
       javascript
         .javascriptGenerator
@@ -1344,23 +1194,15 @@ function runProgram() {
 
     const execute =
       new Function(
-
         "printToLab",
-
         "checkOperation",
-
-        '"use strict";\n' +
-        code
-
+        '"use strict";\n' + code
       );
 
 
     execute(
-
       writeConsole,
-
       checkOperation
-
     );
 
 
@@ -1371,11 +1213,8 @@ function runProgram() {
     ) {
 
       addConsoleLine(
-
         T.noOutput,
-
         "console-placeholder"
-
       );
 
     }
@@ -1399,10 +1238,12 @@ function runProgram() {
     };
 
 
+    saveExecution();
+
+
     document.getElementById(
       "status"
     ).textContent =
-
       T.completed +
       " · " +
       operations +
@@ -1415,25 +1256,16 @@ function runProgram() {
 
   catch (error) {
 
-
     clearConsole();
 
-
     addConsoleLine(
-
       T.error,
-
       "console-error"
-
     );
 
-
     addConsoleLine(
-
       error.message,
-
       "console-error"
-
     );
 
 
@@ -1442,27 +1274,16 @@ function runProgram() {
       T.limitError
     ) {
 
+      addConsoleLine("");
 
       addConsoleLine(
-        ""
-      );
-
-
-      addConsoleLine(
-
         T.stoppedAutomatically,
-
         "console-info"
-
       );
 
-
       addConsoleLine(
-
         T.reviewLoop,
-
         "console-info"
-
       );
 
     }
@@ -1486,10 +1307,12 @@ function runProgram() {
     };
 
 
+    saveExecution();
+
+
     document.getElementById(
       "status"
     ).textContent =
-
       T.stopped +
       " · " +
       operations +
@@ -1503,21 +1326,16 @@ function runProgram() {
 
 
 /* =========================================================
-   TEMPORARY WORKSPACE STORAGE
+   STORAGE
    ========================================================= */
 
-function saveTemporaryWorkspace() {
-
+function saveWorkspace() {
 
   if (!workspace) {
-
     return;
-
   }
 
-
   try {
-
 
     const state =
       Blockly.serialization
@@ -1526,29 +1344,18 @@ function saveTemporaryWorkspace() {
           workspace
         );
 
-
     sessionStorage.setItem(
-
-      STORAGE_KEY,
-
-      JSON.stringify(
-        state
-      )
-
+      WORKSPACE_STORAGE_KEY,
+      JSON.stringify(state)
     );
 
   }
 
-
   catch (error) {
 
-
     console.error(
-
       "Could not save workspace.",
-
       error
-
     );
 
   }
@@ -1556,63 +1363,91 @@ function saveTemporaryWorkspace() {
 }
 
 
-function restoreTemporaryWorkspace() {
-
+function restoreWorkspace() {
 
   const saved =
     sessionStorage.getItem(
-      STORAGE_KEY
+      WORKSPACE_STORAGE_KEY
     );
 
-
   if (!saved) {
-
     return;
-
   }
-
 
   try {
 
-
     const state =
-      JSON.parse(
-        saved
-      );
-
+      JSON.parse(saved);
 
     Blockly.serialization
       .workspaces
       .load(
-
         state,
-
         workspace
-
       );
 
+  }
 
-    sessionStorage.removeItem(
-      STORAGE_KEY
+  catch (error) {
+
+    console.error(
+      "Could not restore workspace.",
+      error
     );
 
   }
 
+}
+
+
+function saveExecution() {
+
+  try {
+
+    sessionStorage.setItem(
+      EXECUTION_STORAGE_KEY,
+      JSON.stringify(
+        lastExecution
+      )
+    );
+
+  }
 
   catch (error) {
 
-
     console.error(
-
-      "Could not restore workspace.",
-
+      "Could not save execution.",
       error
-
     );
 
+  }
 
-    sessionStorage.removeItem(
-      STORAGE_KEY
+}
+
+
+function restoreExecution() {
+
+  const saved =
+    sessionStorage.getItem(
+      EXECUTION_STORAGE_KEY
+    );
+
+  if (!saved) {
+    return;
+  }
+
+  try {
+
+    lastExecution =
+      JSON.parse(saved);
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "Could not restore execution.",
+      error
     );
 
   }
@@ -1624,38 +1459,27 @@ function restoreTemporaryWorkspace() {
    LANGUAGE SWITCHING
    ========================================================= */
 
-function switchLanguage(
-  language
-) {
-
+function switchLanguage(language) {
 
   if (
     language ===
     currentLanguage
   ) {
-
     return;
-
   }
 
-
-  saveTemporaryWorkspace();
-
+  saveWorkspace();
+  saveExecution();
 
   const url =
     new URL(
       window.location.href
     );
 
-
   url.searchParams.set(
-
     "lang",
-
     language
-
   );
-
 
   window.location.href =
     url.toString();
@@ -1666,34 +1490,20 @@ function switchLanguage(
 document.getElementById(
   "langES"
 ).addEventListener(
-
   "click",
-
   function() {
-
-    switchLanguage(
-      "es"
-    );
-
+    switchLanguage("es");
   }
-
 );
 
 
 document.getElementById(
   "langEN"
 ).addEventListener(
-
   "click",
-
   function() {
-
-    switchLanguage(
-      "en"
-    );
-
+    switchLanguage("en");
   }
-
 );
 
 
@@ -1703,68 +1513,46 @@ document.getElementById(
 
 function detectStructures() {
 
-
   const blocks =
     workspace.getAllBlocks(
       false
     );
 
-
   const types =
     blocks.map(
-      block =>
-        block.type
+      block => block.type
     );
-
 
   return {
 
-
     variables:
       types.some(
-
         type =>
           type.startsWith(
             "variables_"
           )
-
       ),
-
 
     conditionals:
       types.includes(
         "controls_if"
       ),
 
-
     loops:
       types.some(
-
         type =>
-
-          type ===
-            "controls_repeat_ext" ||
-
-          type ===
-            "controls_whileUntil" ||
-
-          type ===
-            "controls_for" ||
-
-          type ===
-            "controls_forEach"
-
+          type === "controls_repeat_ext" ||
+          type === "controls_whileUntil" ||
+          type === "controls_for" ||
+          type === "controls_forEach"
       ),
-
 
     functions:
       types.some(
-
         type =>
           type.startsWith(
             "procedures_"
           )
-
       )
 
   };
@@ -1773,26 +1561,21 @@ function detectStructures() {
 
 
 /* =========================================================
-   WORKSPACE → IMAGE
+   WORKSPACE SVG EXPORT
    ========================================================= */
 
 function createWorkspaceImage() {
 
-
   return new Promise(
-
     (
       resolve,
       reject
     ) => {
 
-
       try {
-
 
         const canvasGroup =
           workspace.getCanvas();
-
 
         const bbox =
           canvasGroup.getBBox();
@@ -1803,32 +1586,24 @@ function createWorkspaceImage() {
           bbox.height <= 0
         ) {
 
-
           reject(
-
             new Error(
-              currentLanguage === "es"
-                ? "El espacio de trabajo está vacío."
-                : "Workspace is empty."
+              T.emptyWorkspace
             )
-
           );
-
 
           return;
 
         }
 
 
-        const padding = 30;
-
+        const padding = 40;
 
         const exportWidth =
           Math.ceil(
             bbox.width +
             padding * 2
           );
-
 
         const exportHeight =
           Math.ceil(
@@ -1837,10 +1612,6 @@ function createWorkspaceImage() {
           );
 
 
-        /*
-         * Clone Blockly SVG content.
-         */
-
         const clone =
           canvasGroup.cloneNode(
             true
@@ -1848,120 +1619,157 @@ function createWorkspaceImage() {
 
 
         /*
-         * Build independent SVG.
+         * Blockly blocks use CSS classes for
+         * some visual properties.
+         *
+         * We copy the computed styles directly
+         * into the cloned SVG nodes so the
+         * exported image does not depend on
+         * external stylesheets.
          */
+
+        const originalElements =
+          canvasGroup.querySelectorAll(
+            "*"
+          );
+
+        const clonedElements =
+          clone.querySelectorAll(
+            "*"
+          );
+
+
+        for (
+          let i = 0;
+          i < originalElements.length;
+          i++
+        ) {
+
+          const original =
+            originalElements[i];
+
+          const cloned =
+            clonedElements[i];
+
+          if (!cloned) {
+            continue;
+          }
+
+          const computed =
+            window.getComputedStyle(
+              original
+            );
+
+          const properties = [
+            "fill",
+            "fill-opacity",
+            "stroke",
+            "stroke-width",
+            "stroke-opacity",
+            "font-family",
+            "font-size",
+            "font-weight",
+            "font-style",
+            "opacity",
+            "display"
+          ];
+
+          properties.forEach(
+            property => {
+
+              const value =
+                computed.getPropertyValue(
+                  property
+                );
+
+              if (value) {
+
+                cloned.style.setProperty(
+                  property,
+                  value
+                );
+
+              }
+
+            }
+          );
+
+        }
+
 
         const svg =
           document.createElementNS(
-
             "http://www.w3.org/2000/svg",
-
             "svg"
-
           );
 
 
         svg.setAttribute(
-
           "xmlns",
-
           "http://www.w3.org/2000/svg"
-
         );
 
-
         svg.setAttribute(
-
           "xmlns:xlink",
-
           "http://www.w3.org/1999/xlink"
-
         );
 
-
         svg.setAttribute(
-
           "width",
-
           exportWidth
-
         );
 
-
         svg.setAttribute(
-
           "height",
-
           exportHeight
-
         );
-
 
         svg.setAttribute(
-
           "viewBox",
-
-          `${bbox.x - padding} ${bbox.y - padding} ${exportWidth} ${exportHeight}`
-
+          (
+            bbox.x - padding
+          ) +
+          " " +
+          (
+            bbox.y - padding
+          ) +
+          " " +
+          exportWidth +
+          " " +
+          exportHeight
         );
 
-
-        /*
-         * White background.
-         */
 
         const background =
           document.createElementNS(
-
             "http://www.w3.org/2000/svg",
-
             "rect"
-
           );
 
 
         background.setAttribute(
-
           "x",
-
           bbox.x - padding
-
         );
 
-
         background.setAttribute(
-
           "y",
-
           bbox.y - padding
-
         );
 
-
         background.setAttribute(
-
           "width",
-
           exportWidth
-
         );
 
-
         background.setAttribute(
-
           "height",
-
           exportHeight
-
         );
 
-
         background.setAttribute(
-
           "fill",
-
           "#ffffff"
-
         );
 
 
@@ -1970,50 +1778,21 @@ function createWorkspaceImage() {
         );
 
 
-        /*
-         * Blockly text styling.
-         *
-         * We explicitly provide essential styles instead
-         * of depending entirely on cross-origin stylesheets.
-         */
-
         const style =
           document.createElementNS(
-
             "http://www.w3.org/2000/svg",
-
             "style"
-
           );
 
 
         style.textContent = `
+          text {
+            font-family: Arial, Helvetica, sans-serif;
+          }
 
           .blocklyText {
-            fill: #fff;
-            font-family: sans-serif;
-            font-size: 11pt;
+            font-family: Arial, Helvetica, sans-serif;
           }
-
-          .blocklyNonEditableText > text,
-          .blocklyEditableText > text {
-            fill: #575E75;
-          }
-
-          .blocklyDropdownText {
-            fill: #fff !important;
-          }
-
-          .blocklyIconShape {
-            fill: #00f;
-            stroke: #fff;
-            stroke-width: 1px;
-          }
-
-          .blocklyIconSymbol {
-            fill: #fff;
-          }
-
         `;
 
 
@@ -2021,15 +1800,10 @@ function createWorkspaceImage() {
           style
         );
 
-
         svg.appendChild(
           clone
         );
 
-
-        /*
-         * Serialize SVG.
-         */
 
         const serializer =
           new XMLSerializer();
@@ -2043,14 +1817,11 @@ function createWorkspaceImage() {
 
         const blob =
           new Blob(
-
             [source],
-
             {
               type:
                 "image/svg+xml;charset=utf-8"
             }
-
           );
 
 
@@ -2067,23 +1838,14 @@ function createWorkspaceImage() {
         image.onload =
           function() {
 
-
             URL.revokeObjectURL(
               url
             );
 
-
             resolve({
-
-              image:
-                image,
-
-              width:
-                exportWidth,
-
-              height:
-                exportHeight
-
+              image: image,
+              width: exportWidth,
+              height: exportHeight
             });
 
           };
@@ -2092,24 +1854,16 @@ function createWorkspaceImage() {
         image.onerror =
           function() {
 
-
             URL.revokeObjectURL(
               url
             );
 
-
             reject(
-
               new Error(
-
                 currentLanguage === "es"
-
                   ? "No fue posible renderizar los bloques."
-
                   : "Could not render Blockly blocks."
-
               )
-
             );
 
           };
@@ -2120,42 +1874,29 @@ function createWorkspaceImage() {
 
       }
 
-
       catch (error) {
 
-        reject(
-          error
-        );
+        reject(error);
 
       }
 
     }
-
   );
 
 }
 
 
 /* =========================================================
-   TEXT WRAPPING
+   CANVAS TEXT WRAPPING
    ========================================================= */
 
-function drawWrappedText(
-
+function getWrappedLines(
   context,
-
   text,
-
-  x,
-
-  y,
-
-  maxWidth,
-
-  lineHeight
-
+  maxWidth
 ) {
 
+  const result = [];
 
   const paragraphs =
     String(text).split(
@@ -2163,23 +1904,14 @@ function drawWrappedText(
     );
 
 
-  let currentY =
-    y;
-
-
   paragraphs.forEach(
-
     paragraph => {
-
 
       if (
         paragraph.trim() === ""
       ) {
 
-
-        currentY +=
-          lineHeight;
-
+        result.push("");
 
         return;
 
@@ -2187,93 +1919,56 @@ function drawWrappedText(
 
 
       const words =
-        paragraph.split(
-          " "
-        );
-
+        paragraph.split(" ");
 
       let line = "";
 
 
-      for (
-        let i = 0;
-        i < words.length;
-        i++
-      ) {
+      words.forEach(
+        word => {
+
+          const testLine =
+            line
+              ? line + " " + word
+              : word;
+
+          const width =
+            context.measureText(
+              testLine
+            ).width;
 
 
-        const testLine =
-          line +
-          words[i] +
-          " ";
+          if (
+            width > maxWidth &&
+            line
+          ) {
 
+            result.push(line);
 
-        const measured =
-          context.measureText(
-            testLine
-          ).width;
+            line = word;
 
+          } else {
 
-        if (
-          measured >
-            maxWidth &&
-          i > 0
-        ) {
+            line =
+              testLine;
 
-
-          context.fillText(
-
-            line.trim(),
-
-            x,
-
-            currentY
-
-          );
-
-
-          line =
-            words[i] +
-            " ";
-
-
-          currentY +=
-            lineHeight;
+          }
 
         }
-
-
-        else {
-
-
-          line =
-            testLine;
-
-        }
-
-      }
-
-
-      context.fillText(
-
-        line.trim(),
-
-        x,
-
-        currentY
-
       );
 
 
-      currentY +=
-        lineHeight;
+      if (line) {
+
+        result.push(line);
+
+      }
 
     }
-
   );
 
 
-  return currentY;
+  return result;
 
 }
 
@@ -2284,12 +1979,19 @@ function drawWrappedText(
 
 async function generateEvidence() {
 
-
   if (!workspace) {
-
     return;
-
   }
+
+
+  const evidenceButton =
+    document.getElementById(
+      "evidenceButton"
+    );
+
+
+  evidenceButton.disabled =
+    true;
 
 
   document.getElementById(
@@ -2300,7 +2002,6 @@ async function generateEvidence() {
 
   try {
 
-
     const blockData =
       await createWorkspaceImage();
 
@@ -2309,17 +2010,11 @@ async function generateEvidence() {
       detectStructures();
 
 
-    /* -----------------------------------------------------
-       PAGE DIMENSIONS
-       ----------------------------------------------------- */
-
     const PAGE_WIDTH =
-      1200;
-
+      1400;
 
     const SIDE_PADDING =
-      70;
-
+      80;
 
     const CONTENT_WIDTH =
       PAGE_WIDTH -
@@ -2327,17 +2022,15 @@ async function generateEvidence() {
 
 
     /*
-     * Scale algorithm only when necessary.
+     * Prevent extremely wide algorithms from
+     * producing microscopic evidence.
      */
 
     const algorithmScale =
       Math.min(
-
-        1,
-
+        1.4,
         CONTENT_WIDTH /
           blockData.width
-
       );
 
 
@@ -2352,52 +2045,67 @@ async function generateEvidence() {
 
 
     const outputText =
-
       lastExecution.executed
-
         ? (
             lastExecution.output ||
             T.noOutput
           )
-
         : T.notExecuted;
 
 
-    const outputLineCount =
-      Math.max(
+    /*
+     * Temporary canvas for text measurement.
+     */
 
-        1,
+    const measurementCanvas =
+      document.createElement(
+        "canvas"
+      );
 
-        outputText
-          .split("\n")
-          .length
-
+    const measurementContext =
+      measurementCanvas.getContext(
+        "2d"
       );
 
 
-    const outputHeight =
+    measurementContext.font =
+      '20px "Courier New"';
+
+
+    const outputLines =
+      getWrappedLines(
+        measurementContext,
+        outputText,
+        CONTENT_WIDTH
+      );
+
+
+    const OUTPUT_LINE_HEIGHT =
+      30;
+
+
+    const outputContentHeight =
       Math.max(
-
-        130,
-
-        outputLineCount *
-          30 +
-          60
-
+        50,
+        outputLines.length *
+          OUTPUT_LINE_HEIGHT
       );
 
 
     const HEADER_HEIGHT =
-      150;
-
+      155;
 
     const ALGORITHM_TITLE_HEIGHT =
-      70;
+      65;
 
+    const ALGORITHM_PADDING =
+      30;
+
+    const OUTPUT_TITLE_HEIGHT =
+      65;
 
     const STRUCTURES_HEIGHT =
-      230;
-
+      235;
 
     const FOOTER_HEIGHT =
       100;
@@ -2405,27 +2113,18 @@ async function generateEvidence() {
 
     const PAGE_HEIGHT =
       Math.ceil(
-
         HEADER_HEIGHT +
-
         ALGORITHM_TITLE_HEIGHT +
-
         algorithmHeight +
-
-        outputHeight +
-
+        ALGORITHM_PADDING * 2 +
+        55 +
+        OUTPUT_TITLE_HEIGHT +
+        outputContentHeight +
+        55 +
         STRUCTURES_HEIGHT +
-
-        FOOTER_HEIGHT +
-
-        150
-
+        FOOTER_HEIGHT
       );
 
-
-    /* -----------------------------------------------------
-       CANVAS
-       ----------------------------------------------------- */
 
     const evidenceCanvas =
       document.createElement(
@@ -2435,7 +2134,6 @@ async function generateEvidence() {
 
     evidenceCanvas.width =
       PAGE_WIDTH;
-
 
     evidenceCanvas.height =
       PAGE_HEIGHT;
@@ -2447,84 +2145,62 @@ async function generateEvidence() {
       );
 
 
-    /* BACKGROUND */
+    /*
+     * BACKGROUND
+     */
 
     ctx.fillStyle =
       "#ffffff";
 
-
     ctx.fillRect(
-
       0,
-
       0,
-
       PAGE_WIDTH,
-
       PAGE_HEIGHT
-
     );
 
 
-    /* -----------------------------------------------------
-       HEADER
-       ----------------------------------------------------- */
+    /*
+     * HEADER
+     */
 
     ctx.fillStyle =
       "#202124";
 
-
     ctx.font =
-      "bold 38px Arial";
-
+      "bold 40px Arial";
 
     ctx.fillText(
-
       "Algorithm Lab",
-
       SIDE_PADDING,
-
       65
-
     );
 
 
     ctx.fillStyle =
       "#5f6368";
 
-
     ctx.font =
-      "20px Arial";
-
+      "21px Arial";
 
     ctx.fillText(
-
       T.algorithmEvidence,
-
       SIDE_PADDING,
-
-      103
-
+      105
     );
 
 
     ctx.textAlign =
       "right";
 
-
     ctx.font =
       "18px Arial";
 
-
     ctx.fillText(
-
-      "v0.6",
-
+      "v0.6.1",
       PAGE_WIDTH -
         SIDE_PADDING,
-
       65
-
     );
 
 
@@ -2535,39 +2211,28 @@ async function generateEvidence() {
     ctx.strokeStyle =
       "#dadce0";
 
-
     ctx.lineWidth =
       2;
 
-
     ctx.beginPath();
 
-
     ctx.moveTo(
-
       SIDE_PADDING,
-
-      130
-
+      132
     );
-
 
     ctx.lineTo(
-
       PAGE_WIDTH -
         SIDE_PADDING,
-
-      130
-
+      132
     );
-
 
     ctx.stroke();
 
 
-    /* -----------------------------------------------------
-       ALGORITHM
-       ----------------------------------------------------- */
+    /*
+     * ALGORITHM
+     */
 
     let y =
       HEADER_HEIGHT;
@@ -2576,19 +2241,13 @@ async function generateEvidence() {
     ctx.fillStyle =
       "#202124";
 
-
     ctx.font =
-      "bold 22px Arial";
-
+      "bold 23px Arial";
 
     ctx.fillText(
-
       T.algorithm,
-
       SIDE_PADDING,
-
       y + 35
-
     );
 
 
@@ -2599,24 +2258,17 @@ async function generateEvidence() {
     ctx.fillStyle =
       "#f8f9fa";
 
-
     ctx.fillRect(
-
       SIDE_PADDING,
-
       y,
-
       CONTENT_WIDTH,
-
-      algorithmHeight + 40
-
+      algorithmHeight +
+        ALGORITHM_PADDING * 2
     );
 
 
     const algorithmX =
-
       SIDE_PADDING +
-
       (
         CONTENT_WIDTH -
         algorithmWidth
@@ -2624,148 +2276,112 @@ async function generateEvidence() {
 
 
     ctx.drawImage(
-
       blockData.image,
-
       algorithmX,
-
-      y + 20,
-
+      y +
+        ALGORITHM_PADDING,
       algorithmWidth,
-
       algorithmHeight
-
     );
 
 
     y +=
       algorithmHeight +
-      85;
+      ALGORITHM_PADDING * 2 +
+      55;
 
 
-    /* -----------------------------------------------------
-       OUTPUT
-       ----------------------------------------------------- */
+    /*
+     * OUTPUT
+     */
 
     ctx.fillStyle =
       "#202124";
 
-
     ctx.font =
-      "bold 22px Arial";
-
+      "bold 23px Arial";
 
     ctx.fillText(
-
       T.output,
-
       SIDE_PADDING,
-
       y
-
     );
 
 
     y +=
-      40;
+      45;
 
 
     ctx.fillStyle =
       "#202124";
 
-
     ctx.font =
-      '19px "Courier New"';
+      '20px "Courier New"';
 
 
-    y =
-      drawWrappedText(
+    outputLines.forEach(
+      line => {
 
-        ctx,
+        ctx.fillText(
+          line,
+          SIDE_PADDING,
+          y
+        );
 
-        outputText,
+        y +=
+          OUTPUT_LINE_HEIGHT;
 
-        SIDE_PADDING,
-
-        y,
-
-        CONTENT_WIDTH,
-
-        30
-
-      );
+      }
+    );
 
 
-    y +=
-      35;
+    y += 30;
 
 
-    /* -----------------------------------------------------
-       DIVIDER
-       ----------------------------------------------------- */
+    /*
+     * DIVIDER
+     */
 
     ctx.strokeStyle =
       "#dadce0";
 
-
     ctx.beginPath();
 
-
     ctx.moveTo(
-
       SIDE_PADDING,
-
       y
-
     );
-
 
     ctx.lineTo(
-
       PAGE_WIDTH -
         SIDE_PADDING,
-
       y
-
     );
-
 
     ctx.stroke();
 
 
-    y +=
-      50;
+    y += 50;
 
 
-    /* -----------------------------------------------------
-       STRUCTURES
-       ----------------------------------------------------- */
+    /*
+     * STRUCTURES
+     */
 
     ctx.fillStyle =
       "#202124";
 
-
     ctx.font =
-      "bold 22px Arial";
-
+      "bold 23px Arial";
 
     ctx.fillText(
-
       T.structures,
-
       SIDE_PADDING,
-
       y
-
     );
 
 
-    y +=
-      42;
-
-
-    ctx.font =
-      "19px Arial";
+    y += 45;
 
 
     const structureRows = [
@@ -2794,104 +2410,87 @@ async function generateEvidence() {
 
 
     structureRows.forEach(
-
       row => {
-
 
         ctx.fillStyle =
           "#202124";
 
+        ctx.font =
+          "19px Arial";
 
         ctx.fillText(
-
           row[0],
-
           SIDE_PADDING,
-
           y
-
         );
 
 
         ctx.font =
           "bold 19px Arial";
 
-
         ctx.fillText(
-
           row[1]
             ? T.yes
             : T.no,
-
-          SIDE_PADDING +
-            250,
-
+          SIDE_PADDING + 270,
           y
-
         );
 
 
-        ctx.font =
-          "19px Arial";
-
-
-        y +=
-          32;
+        y += 34;
 
       }
-
     );
 
 
-    y +=
-      20;
+    y += 20;
 
 
-    /* -----------------------------------------------------
-       EXECUTION INFORMATION
-       ----------------------------------------------------- */
+    /*
+     * EXECUTION INFORMATION
+     */
+
+    ctx.fillStyle =
+      "#5f6368";
+
+    ctx.font =
+      "17px Arial";
+
 
     if (
       lastExecution.executed
     ) {
 
-
-      ctx.fillStyle =
-        "#5f6368";
-
-
-      ctx.font =
-        "17px Arial";
-
-
       ctx.fillText(
-
+        T.lastExecution +
+        ": " +
         (
           lastExecution.success
             ? T.completed
             : T.stopped
         ) +
-
         " · " +
-
         lastExecution.operations +
-
         " " +
-
         T.operations,
-
         SIDE_PADDING,
-
         y
+      );
 
+    } else {
+
+      ctx.fillText(
+        T.notExecuted,
+        SIDE_PADDING,
+        y
       );
 
     }
 
 
-    /* -----------------------------------------------------
-       FOOTER
-       ----------------------------------------------------- */
+    /*
+     * FOOTER
+     */
 
     const now =
       new Date();
@@ -2899,52 +2498,35 @@ async function generateEvidence() {
 
     const formattedDate =
       now.toLocaleString(
-
         currentLanguage === "es"
-
           ? "es-MX"
-
           : "en-US"
-
       );
 
 
     ctx.fillStyle =
       "#5f6368";
 
-
     ctx.font =
       "16px Arial";
 
-
     ctx.fillText(
-
       T.generated +
       ": " +
       formattedDate,
-
       SIDE_PADDING,
-
-      PAGE_HEIGHT -
-        45
-
+      PAGE_HEIGHT - 45
     );
 
 
     ctx.textAlign =
       "right";
 
-
     ctx.fillText(
-
-      "Algorithm Lab · v0.6",
-
+      "Algorithm Lab · v0.6.1",
       PAGE_WIDTH -
         SIDE_PADDING,
-
-      PAGE_HEIGHT -
-        45
-
+      PAGE_HEIGHT - 45
     );
 
 
@@ -2952,23 +2534,22 @@ async function generateEvidence() {
       "left";
 
 
-    /* -----------------------------------------------------
-       PNG
-       ----------------------------------------------------- */
+    /*
+     * DOWNLOAD
+     */
 
     evidenceCanvas.toBlob(
-
       function(blob) {
-
 
         if (!blob) {
 
+          evidenceButton.disabled =
+            false;
 
           document.getElementById(
             "status"
           ).textContent =
             T.evidenceError;
-
 
           return;
 
@@ -3001,7 +2582,6 @@ async function generateEvidence() {
 
 
         link.download =
-
           "algorithm_evidence_" +
           timestamp +
           ".png";
@@ -3014,12 +2594,10 @@ async function generateEvidence() {
 
         link.click();
 
-
         link.remove();
 
 
         setTimeout(
-
           function() {
 
             URL.revokeObjectURL(
@@ -3027,9 +2605,7 @@ async function generateEvidence() {
             );
 
           },
-
-          1000
-
+          1500
         );
 
 
@@ -3037,6 +2613,10 @@ async function generateEvidence() {
           "status"
         ).textContent =
           T.evidenceGenerated;
+
+
+        evidenceButton.disabled =
+          false;
 
       },
 
@@ -3049,19 +2629,19 @@ async function generateEvidence() {
 
   catch (error) {
 
-
-    console.error(
-      error
-    );
+    console.error(error);
 
 
     document.getElementById(
       "status"
     ).textContent =
-
       T.evidenceError +
       " " +
       error.message;
+
+
+    evidenceButton.disabled =
+      false;
 
   }
 
@@ -3069,58 +2649,42 @@ async function generateEvidence() {
 
 
 /* =========================================================
-   BUTTONS
+   BUTTON EVENTS
    ========================================================= */
 
 document.getElementById(
   "runButton"
 ).addEventListener(
-
   "click",
-
   runProgram
-
 );
 
 
 document.getElementById(
   "clearButton"
 ).addEventListener(
-
   "click",
-
   function() {
-
 
     clearConsole();
 
-
     addConsoleLine(
-
       T.consoleCleared,
-
       "console-placeholder"
-
     );
 
   }
-
 );
 
 
 document.getElementById(
   "resetButton"
 ).addEventListener(
-
   "click",
-
   function() {
 
-
     if (!workspace) {
-
       return;
-
     }
 
 
@@ -3131,24 +2695,25 @@ document.getElementById(
 
 
     lastExecution = {
-
       executed: false,
-
       output: "",
-
       operations: 0,
-
       success: false
-
     };
 
 
+    sessionStorage.removeItem(
+      WORKSPACE_STORAGE_KEY
+    );
+
+    sessionStorage.removeItem(
+      EXECUTION_STORAGE_KEY
+    );
+
+
     addConsoleLine(
-
       T.ready,
-
       "console-placeholder"
-
     );
 
 
@@ -3158,18 +2723,14 @@ document.getElementById(
       T.workspaceReset;
 
   }
-
 );
 
 
 document.getElementById(
   "evidenceButton"
 ).addEventListener(
-
   "click",
-
   generateEvidence
-
 );
 
 </script>
