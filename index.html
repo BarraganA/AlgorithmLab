@@ -4,16 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Algorithm Lab v0.5</title>
+  <title>Algorithm Lab v0.6</title>
 
-  <!-- Blockly core -->
+  <!-- =====================================================
+       BLOCKLY
+       ===================================================== -->
+
   <script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
   <script src="https://unpkg.com/blockly/blocks_compressed.js"></script>
   <script src="https://unpkg.com/blockly/javascript_compressed.js"></script>
 
-  <!-- Blockly language will be loaded dynamically -->
-
   <style>
+
     * {
       box-sizing: border-box;
     }
@@ -26,12 +28,14 @@
     }
 
     header {
-      background: #fff;
+      background: #ffffff;
       border-bottom: 1px solid #dadce0;
       padding: 14px 22px;
+
       display: flex;
       justify-content: space-between;
       align-items: center;
+
       gap: 20px;
       flex-wrap: wrap;
     }
@@ -95,26 +99,33 @@
     #blocklyDiv {
       width: 100%;
       height: 620px;
+
       background: white;
       border: 1px solid #dadce0;
       border-radius: 10px;
+
       overflow: hidden;
     }
 
     .console-panel {
       min-width: 0;
       min-height: 620px;
+
       background: #202124;
       color: #f1f3f4;
+
       border-radius: 10px;
+
       display: flex;
       flex-direction: column;
+
       overflow: hidden;
     }
 
     .console-header {
       padding: 14px 16px;
       border-bottom: 1px solid #3c4043;
+
       font-size: 13px;
       font-weight: bold;
       letter-spacing: .5px;
@@ -122,10 +133,13 @@
 
     #consoleOutput {
       flex: 1;
+
       padding: 16px;
+
       font-family: Consolas, "Courier New", monospace;
       font-size: 14px;
       line-height: 1.6;
+
       white-space: pre-wrap;
       overflow-wrap: anywhere;
       overflow-y: auto;
@@ -145,8 +159,10 @@
 
     .controls {
       margin-top: 14px;
+
       display: flex;
       flex-wrap: wrap;
+
       gap: 10px;
     }
 
@@ -154,10 +170,15 @@
       border: 1px solid #dadce0;
       background: white;
       color: #202124;
+
       border-radius: 7px;
+
       padding: 10px 18px;
+
       min-height: 42px;
+
       font-size: 14px;
+
       cursor: pointer;
     }
 
@@ -175,23 +196,38 @@
       background: #1765cc;
     }
 
+    #evidenceButton {
+      background: #188038;
+      border-color: #188038;
+      color: white;
+    }
+
+    #evidenceButton:hover {
+      background: #137333;
+    }
+
     .status-row {
       margin-top: 12px;
+
       display: flex;
       justify-content: space-between;
       flex-wrap: wrap;
+
       gap: 8px;
+
       font-size: 13px;
       color: #5f6368;
     }
 
     #loadingMessage {
       padding: 40px;
+
       text-align: center;
       color: #5f6368;
     }
 
     @media (max-width: 850px) {
+
       .workspace-layout {
         grid-template-columns: 1fr;
       }
@@ -203,35 +239,67 @@
       .console-panel {
         min-height: 220px;
       }
+
     }
+
   </style>
 </head>
 
+
 <body>
+
+<!-- =====================================================
+     HEADER
+     ===================================================== -->
 
 <header>
 
   <div class="title-group">
-    <h1>Algorithm Lab</h1>
+
+    <h1>
+      Algorithm Lab
+    </h1>
+
     <p id="subtitle">
       Build, test and explore algorithms using blocks.
     </p>
+
   </div>
+
 
   <div class="header-right">
 
     <div class="language-selector">
-      <button id="langES" type="button">ES</button>
-      <button id="langEN" type="button">EN</button>
+
+      <button
+        id="langES"
+        type="button"
+      >
+        ES
+      </button>
+
+      <button
+        id="langEN"
+        type="button"
+      >
+        EN
+      </button>
+
     </div>
 
+
     <div class="version">
-      v0.5
+      v0.6
     </div>
 
   </div>
 
 </header>
+
+
+<!-- =====================================================
+     LAB
+     ===================================================== -->
 
 <div class="lab-container">
 
@@ -239,11 +307,16 @@
     Loading Algorithm Lab...
   </div>
 
-  <div id="labInterface" style="display:none;">
+
+  <div
+    id="labInterface"
+    style="display:none;"
+  >
 
     <div class="workspace-layout">
 
       <div id="blocklyDiv"></div>
+
 
       <div class="console-panel">
 
@@ -254,11 +327,15 @@
           CONSOLE
         </div>
 
+
         <div id="consoleOutput"></div>
 
       </div>
 
     </div>
+
+
+    <!-- CONTROLS -->
 
     <div class="controls">
 
@@ -270,6 +347,7 @@
         ▶ Run
       </button>
 
+
       <button
         id="clearButton"
         class="control-button"
@@ -277,6 +355,7 @@
       >
         Clear console
       </button>
+
 
       <button
         id="resetButton"
@@ -286,7 +365,19 @@
         ↻ Reset workspace
       </button>
 
+
+      <button
+        id="evidenceButton"
+        class="control-button"
+        type="button"
+      >
+        ↓ Generate Evidence
+      </button>
+
     </div>
+
+
+    <!-- STATUS -->
 
     <div class="status-row">
 
@@ -303,929 +394,936 @@
 
 <script>
 
-  /*
-   * =======================================================
-   * CONFIGURATION
-   * =======================================================
-   */
+/* =========================================================
+   CONFIGURATION
+   ========================================================= */
 
-  const MAX_OPERATIONS = 10000;
+const MAX_OPERATIONS = 10000;
 
-  const STORAGE_KEY =
-    "algorithmLabTemporaryWorkspace";
+const STORAGE_KEY =
+  "algorithmLabTemporaryWorkspace";
 
 
-  /*
-   * =======================================================
-   * LANGUAGE
-   * =======================================================
-   */
+/* =========================================================
+   LANGUAGE
+   ========================================================= */
 
-  const params =
-    new URLSearchParams(
-      window.location.search
-    );
-
-  let currentLanguage =
-    params.get("lang") || "en";
+const params =
+  new URLSearchParams(
+    window.location.search
+  );
 
 
-  if (
-    currentLanguage !== "es" &&
-    currentLanguage !== "en"
-  ) {
+let currentLanguage =
+  params.get("lang") || "en";
 
-    currentLanguage = "en";
+
+if (
+  currentLanguage !== "es" &&
+  currentLanguage !== "en"
+) {
+
+  currentLanguage = "en";
+
+}
+
+
+/* =========================================================
+   UI TRANSLATIONS
+   ========================================================= */
+
+const UI = {
+
+  en: {
+
+    subtitle:
+      "Build, test and explore algorithms using blocks.",
+
+    console:
+      "CONSOLE",
+
+    run:
+      "▶ Run",
+
+    clear:
+      "Clear console",
+
+    reset:
+      "↻ Reset workspace",
+
+    evidence:
+      "↓ Generate Evidence",
+
+    ready:
+      "Ready.",
+
+    instruction:
+      "Build an algorithm and press Run.",
+
+    running:
+      "Running...",
+
+    completed:
+      "Execution completed",
+
+    stopped:
+      "Execution stopped",
+
+    operations:
+      "operations",
+
+    maximum:
+      "Maximum operations: 10,000",
+
+    noOutput:
+      "Program finished with no output.",
+
+    consoleCleared:
+      "Console cleared.",
+
+    workspaceReset:
+      "Workspace reset.",
+
+    error:
+      "ERROR",
+
+    limitError:
+      "Maximum operation limit reached. Check for a possible infinite loop or recursive function.",
+
+    stoppedAutomatically:
+      "Execution stopped automatically.",
+
+    reviewLoop:
+      "Review your loop condition or recursive function.",
+
+    loading:
+      "Loading Algorithm Lab...",
+
+    generatingEvidence:
+      "Generating evidence...",
+
+    evidenceGenerated:
+      "Evidence generated.",
+
+    evidenceError:
+      "Could not generate evidence.",
+
+    algorithm:
+      "ALGORITHM",
+
+    output:
+      "OUTPUT",
+
+    structures:
+      "STRUCTURES USED",
+
+    variables:
+      "Variables",
+
+    conditionals:
+      "Conditionals",
+
+    loops:
+      "Loops",
+
+    functions:
+      "Functions",
+
+    yes:
+      "Yes",
+
+    no:
+      "No",
+
+    generated:
+      "Generated",
+
+    notExecuted:
+      "Program has not been executed.",
+
+    algorithmEvidence:
+      "Algorithm Evidence"
+
+  },
+
+
+  es: {
+
+    subtitle:
+      "Construye, prueba y explora algoritmos utilizando bloques.",
+
+    console:
+      "CONSOLA",
+
+    run:
+      "▶ Ejecutar",
+
+    clear:
+      "Limpiar consola",
+
+    reset:
+      "↻ Reiniciar espacio",
+
+    evidence:
+      "↓ Generar evidencia",
+
+    ready:
+      "Listo.",
+
+    instruction:
+      "Construye un algoritmo y presiona Ejecutar.",
+
+    running:
+      "Ejecutando...",
+
+    completed:
+      "Ejecución completada",
+
+    stopped:
+      "Ejecución detenida",
+
+    operations:
+      "operaciones",
+
+    maximum:
+      "Máximo de operaciones: 10,000",
+
+    noOutput:
+      "El programa terminó sin generar salida.",
+
+    consoleCleared:
+      "Consola limpiada.",
+
+    workspaceReset:
+      "Espacio de trabajo reiniciado.",
+
+    error:
+      "ERROR",
+
+    limitError:
+      "Se alcanzó el límite máximo de operaciones. Revisa si existe un ciclo infinito o una función recursiva.",
+
+    stoppedAutomatically:
+      "La ejecución se detuvo automáticamente.",
+
+    reviewLoop:
+      "Revisa la condición del ciclo o la función recursiva.",
+
+    loading:
+      "Cargando Algorithm Lab...",
+
+    generatingEvidence:
+      "Generando evidencia...",
+
+    evidenceGenerated:
+      "Evidencia generada.",
+
+    evidenceError:
+      "No fue posible generar la evidencia.",
+
+    algorithm:
+      "ALGORITMO",
+
+    output:
+      "SALIDA",
+
+    structures:
+      "ESTRUCTURAS UTILIZADAS",
+
+    variables:
+      "Variables",
+
+    conditionals:
+      "Condicionales",
+
+    loops:
+      "Ciclos",
+
+    functions:
+      "Funciones",
+
+    yes:
+      "Sí",
+
+    no:
+      "No",
+
+    generated:
+      "Generado",
+
+    notExecuted:
+      "El programa todavía no ha sido ejecutado.",
+
+    algorithmEvidence:
+      "Evidencia de algoritmo"
 
   }
 
+};
 
-  const UI = {
+
+const T =
+  UI[currentLanguage];
+
+
+/* =========================================================
+   STATIC UI
+   ========================================================= */
+
+document.documentElement.lang =
+  currentLanguage;
+
+
+document.getElementById(
+  "subtitle"
+).textContent =
+  T.subtitle;
+
+
+document.getElementById(
+  "consoleTitle"
+).textContent =
+  T.console;
+
+
+document.getElementById(
+  "runButton"
+).textContent =
+  T.run;
+
+
+document.getElementById(
+  "clearButton"
+).textContent =
+  T.clear;
+
+
+document.getElementById(
+  "resetButton"
+).textContent =
+  T.reset;
+
+
+document.getElementById(
+  "evidenceButton"
+).textContent =
+  T.evidence;
+
+
+document.getElementById(
+  "operationLimit"
+).textContent =
+  T.maximum;
+
+
+document.getElementById(
+  "status"
+).textContent =
+  T.instruction;
+
+
+document.getElementById(
+  "loadingMessage"
+).textContent =
+  T.loading;
+
+
+document.getElementById(
+  "langES"
+).classList.toggle(
+  "active",
+  currentLanguage === "es"
+);
+
+
+document.getElementById(
+  "langEN"
+).classList.toggle(
+  "active",
+  currentLanguage === "en"
+);
+
+
+/* =========================================================
+   BLOCKLY LANGUAGE
+   ========================================================= */
+
+const languageScript =
+  document.createElement(
+    "script"
+  );
+
+
+languageScript.src =
+  currentLanguage === "es"
+
+    ? "https://unpkg.com/blockly/msg/es.js"
+
+    : "https://unpkg.com/blockly/msg/en.js";
+
+
+languageScript.onload =
+  initializeLab;
+
+
+languageScript.onerror =
+  function() {
+
+    document.getElementById(
+      "loadingMessage"
+    ).textContent =
+      "Error loading Blockly language.";
+
+  };
+
+
+document.head.appendChild(
+  languageScript
+);
+
+
+/* =========================================================
+   GLOBAL STATE
+   ========================================================= */
+
+let workspace = null;
+
+
+let lastExecution = {
+
+  executed: false,
+
+  output: "",
+
+  operations: 0,
+
+  success: false
+
+};
+
+
+/* =========================================================
+   INITIALIZE
+   ========================================================= */
+
+function initializeLab() {
+
+
+  const categoryNames = {
 
     en: {
 
-      subtitle:
-        "Build, test and explore algorithms using blocks.",
-
-      console:
-        "CONSOLE",
-
-      run:
-        "▶ Run",
-
-      clear:
-        "Clear console",
-
-      reset:
-        "↻ Reset workspace",
-
-      ready:
-        "Ready.",
-
-      instruction:
-        "Build an algorithm and press Run.",
-
-      running:
-        "Running...",
-
-      completed:
-        "Execution completed",
-
-      stopped:
-        "Execution stopped",
-
-      operations:
-        "operations",
-
-      maximum:
-        "Maximum operations: 10,000",
-
-      noOutput:
-        "Program finished with no output.",
-
-      consoleCleared:
-        "Console cleared.",
-
-      workspaceReset:
-        "Workspace reset.",
-
-      error:
-        "ERROR",
-
-      limitError:
-        "Maximum operation limit reached. " +
-        "Check for a possible infinite loop " +
-        "or recursive function.",
-
-      stoppedAutomatically:
-        "Execution stopped automatically.",
-
-      reviewLoop:
-        "Review your loop condition or recursive function.",
-
-      loading:
-        "Loading Algorithm Lab..."
+      logic: "Logic",
+      loops: "Loops",
+      math: "Math",
+      variables: "Variables",
+      functions: "Functions",
+      text: "Text / Output"
 
     },
 
 
     es: {
 
-      subtitle:
-        "Construye, prueba y explora algoritmos utilizando bloques.",
-
-      console:
-        "CONSOLA",
-
-      run:
-        "▶ Ejecutar",
-
-      clear:
-        "Limpiar consola",
-
-      reset:
-        "↻ Reiniciar espacio",
-
-      ready:
-        "Listo.",
-
-      instruction:
-        "Construye un algoritmo y presiona Ejecutar.",
-
-      running:
-        "Ejecutando...",
-
-      completed:
-        "Ejecución completada",
-
-      stopped:
-        "Ejecución detenida",
-
-      operations:
-        "operaciones",
-
-      maximum:
-        "Máximo de operaciones: 10,000",
-
-      noOutput:
-        "El programa terminó sin generar salida.",
-
-      consoleCleared:
-        "Consola limpiada.",
-
-      workspaceReset:
-        "Espacio de trabajo reiniciado.",
-
-      error:
-        "ERROR",
-
-      limitError:
-        "Se alcanzó el límite máximo de operaciones. " +
-        "Revisa si existe un ciclo infinito " +
-        "o una función recursiva.",
-
-      stoppedAutomatically:
-        "La ejecución se detuvo automáticamente.",
-
-      reviewLoop:
-        "Revisa la condición del ciclo o la función recursiva.",
-
-      loading:
-        "Cargando Algorithm Lab..."
+      logic: "Lógica",
+      loops: "Ciclos",
+      math: "Matemáticas",
+      variables: "Variables",
+      functions: "Funciones",
+      text: "Texto / Salida"
 
     }
 
   };
 
 
-  const T =
-    UI[currentLanguage];
+  const C =
+    categoryNames[currentLanguage];
 
 
-  /*
-   * =======================================================
-   * UPDATE STATIC INTERFACE
-   * =======================================================
-   */
+  /* -------------------------------------------------------
+     TOOLBOX
+     ------------------------------------------------------- */
 
-  document.documentElement.lang =
-    currentLanguage;
+  const toolbox = {
+
+    kind: "categoryToolbox",
+
+    contents: [
+
+
+      /* LOGIC */
+
+      {
+
+        kind: "category",
+
+        name: C.logic,
+
+        categorystyle:
+          "logic_category",
+
+        contents: [
+
+          {
+            kind: "block",
+            type: "controls_if"
+          },
+
+          {
+            kind: "block",
+            type: "logic_compare"
+          },
+
+          {
+            kind: "block",
+            type: "logic_operation"
+          },
+
+          {
+            kind: "block",
+            type: "logic_negate"
+          },
+
+          {
+            kind: "block",
+            type: "logic_boolean"
+          },
+
+          {
+            kind: "block",
+            type: "logic_null"
+          },
+
+          {
+            kind: "block",
+            type: "logic_ternary"
+          }
+
+        ]
+
+      },
+
+
+      /* LOOPS */
+
+      {
+
+        kind: "category",
+
+        name: C.loops,
+
+        categorystyle:
+          "loop_category",
+
+        contents: [
+
+          {
+            kind: "block",
+            type: "controls_repeat_ext"
+          },
+
+          {
+            kind: "block",
+            type: "controls_whileUntil"
+          },
+
+          {
+            kind: "block",
+            type: "controls_for"
+          },
+
+          {
+            kind: "block",
+            type: "controls_forEach"
+          },
+
+          {
+            kind: "block",
+            type: "controls_flow_statements"
+          }
+
+        ]
+
+      },
+
+
+      /* MATH */
+
+      {
+
+        kind: "category",
+
+        name: C.math,
+
+        categorystyle:
+          "math_category",
+
+        contents: [
+
+          {
+            kind: "block",
+            type: "math_number"
+          },
+
+          {
+            kind: "block",
+            type: "math_arithmetic"
+          },
+
+          {
+            kind: "block",
+            type: "math_single"
+          },
+
+          {
+            kind: "block",
+            type: "math_trig"
+          },
+
+          {
+            kind: "block",
+            type: "math_constant"
+          },
+
+          {
+            kind: "block",
+            type: "math_number_property"
+          },
+
+          {
+            kind: "block",
+            type: "math_round"
+          },
+
+          {
+            kind: "block",
+            type: "math_modulo"
+          },
+
+          {
+            kind: "block",
+            type: "math_constrain"
+          },
+
+          {
+            kind: "block",
+            type: "math_random_int"
+          },
+
+          {
+            kind: "block",
+            type: "math_random_float"
+          }
+
+        ]
+
+      },
+
+
+      /* VARIABLES */
+
+      {
+
+        kind: "category",
+
+        name: C.variables,
+
+        categorystyle:
+          "variable_category",
+
+        custom:
+          "VARIABLE"
+
+      },
+
+
+      /* FUNCTIONS */
+
+      {
+
+        kind: "category",
+
+        name: C.functions,
+
+        categorystyle:
+          "procedure_category",
+
+        custom:
+          "PROCEDURE"
+
+      },
+
+
+      /* TEXT / OUTPUT */
+
+      {
+
+        kind: "category",
+
+        name: C.text,
+
+        categorystyle:
+          "text_category",
+
+        contents: [
+
+          {
+            kind: "block",
+            type: "text"
+          },
+
+          {
+            kind: "block",
+            type: "text_join"
+          },
+
+          {
+            kind: "block",
+            type: "text_length"
+          },
+
+          {
+            kind: "block",
+            type: "text_isEmpty"
+          },
+
+          {
+            kind: "block",
+            type: "text_print"
+          }
+
+        ]
+
+      }
+
+    ]
+
+  };
+
+
+  /* -------------------------------------------------------
+     WORKSPACE
+     ------------------------------------------------------- */
+
+  workspace =
+    Blockly.inject(
+
+      "blocklyDiv",
+
+      {
+
+        toolbox: toolbox,
+
+        trashcan: true,
+
+        scrollbars: true,
+
+        move: {
+
+          scrollbars: true,
+          drag: true,
+          wheel: true
+
+        },
+
+        zoom: {
+
+          controls: true,
+          wheel: true,
+
+          startScale: 1,
+
+          maxScale: 2,
+
+          minScale: 0.5,
+
+          scaleSpeed: 1.2
+
+        }
+
+      }
+
+    );
+
+
+  /* -------------------------------------------------------
+     CUSTOM PRINT
+     ------------------------------------------------------- */
+
+  javascript
+    .javascriptGenerator
+    .forBlock["text_print"] =
+
+    function(
+      block,
+      generator
+    ) {
+
+      const value =
+        generator.valueToCode(
+
+          block,
+
+          "TEXT",
+
+          javascript.Order.NONE
+
+        ) || "''";
+
+
+      return (
+
+        "printToLab(" +
+        value +
+        ");\n"
+
+      );
+
+    };
+
+
+  /* -------------------------------------------------------
+     OPERATION PROTECTION
+     ------------------------------------------------------- */
+
+  javascript
+    .javascriptGenerator
+    .STATEMENT_PREFIX =
+
+      "checkOperation();\n";
+
+
+  restoreTemporaryWorkspace();
+
+
+  /* -------------------------------------------------------
+     SHOW LAB
+     ------------------------------------------------------- */
 
   document.getElementById(
-    "subtitle"
-  ).textContent =
-    T.subtitle;
+    "loadingMessage"
+  ).style.display =
+    "none";
+
 
   document.getElementById(
-    "consoleTitle"
-  ).textContent =
-    T.console;
+    "labInterface"
+  ).style.display =
+    "block";
 
-  document.getElementById(
-    "runButton"
-  ).textContent =
-    T.run;
 
-  document.getElementById(
-    "clearButton"
-  ).textContent =
-    T.clear;
+  Blockly.svgResize(
+    workspace
+  );
 
-  document.getElementById(
-    "resetButton"
-  ).textContent =
-    T.reset;
 
+  clearConsole();
+
+
+  addConsoleLine(
+
+    T.ready,
+
+    "console-placeholder"
+
+  );
+
+}
+
+
+/* =========================================================
+   CONSOLE
+   ========================================================= */
+
+const consoleOutput =
   document.getElementById(
-    "operationLimit"
-  ).textContent =
-    T.maximum;
+    "consoleOutput"
+  );
+
+
+function clearConsole() {
+
+  consoleOutput.textContent =
+    "";
+
+}
+
+
+function addConsoleLine(
+  text,
+  className = ""
+) {
+
+  const line =
+    document.createElement(
+      "div"
+    );
+
+
+  line.textContent =
+    text;
+
+
+  if (className) {
+
+    line.className =
+      className;
+
+  }
+
+
+  consoleOutput.appendChild(
+    line
+  );
+
+}
+
+
+function writeConsole(value) {
+
+  addConsoleLine(
+
+    "> " +
+    String(value)
+
+  );
+
+}
+
+
+/* =========================================================
+   EXECUTION
+   ========================================================= */
+
+function runProgram() {
+
+
+  clearConsole();
+
 
   document.getElementById(
     "status"
   ).textContent =
-    T.instruction;
+    T.running;
 
-  document.getElementById(
-    "loadingMessage"
-  ).textContent =
-    T.loading;
 
+  let operations = 0;
 
-  document.getElementById(
-    "langES"
-  ).classList.toggle(
-    "active",
-    currentLanguage === "es"
-  );
 
-  document.getElementById(
-    "langEN"
-  ).classList.toggle(
-    "active",
-    currentLanguage === "en"
-  );
+  function checkOperation() {
 
 
-  /*
-   * =======================================================
-   * LOAD BLOCKLY LANGUAGE
-   * =======================================================
-   */
+    operations++;
 
-  const languageScript =
-    document.createElement("script");
 
-  languageScript.src =
-    currentLanguage === "es"
-      ? "https://unpkg.com/blockly/msg/es.js"
-      : "https://unpkg.com/blockly/msg/en.js";
+    if (
+      operations >
+      MAX_OPERATIONS
+    ) {
 
-  languageScript.onload =
-    initializeLab;
-
-  languageScript.onerror =
-    function() {
-
-      document.getElementById(
-        "loadingMessage"
-      ).textContent =
-        "Error loading Blockly language.";
-
-    };
-
-  document.head.appendChild(
-    languageScript
-  );
-
-
-  /*
-   * =======================================================
-   * MAIN APPLICATION
-   * =======================================================
-   */
-
-  let workspace = null;
-
-
-  function initializeLab() {
-
-    /*
-     * -----------------------
-     * TOOLBOX
-     * -----------------------
-     */
-
-    const categoryNames = {
-
-      en: {
-        logic: "Logic",
-        loops: "Loops",
-        math: "Math",
-        variables: "Variables",
-        functions: "Functions",
-        text: "Text / Output"
-      },
-
-      es: {
-        logic: "Lógica",
-        loops: "Ciclos",
-        math: "Matemáticas",
-        variables: "Variables",
-        functions: "Funciones",
-        text: "Texto / Salida"
-      }
-
-    };
-
-
-    const C =
-      categoryNames[currentLanguage];
-
-
-    const toolbox = {
-
-      kind: "categoryToolbox",
-
-      contents: [
-
-        /*
-         * LOGIC
-         */
-
-        {
-          kind: "category",
-          name: C.logic,
-          categorystyle:
-            "logic_category",
-
-          contents: [
-
-            {
-              kind: "block",
-              type: "controls_if"
-            },
-
-            {
-              kind: "block",
-              type: "logic_compare"
-            },
-
-            {
-              kind: "block",
-              type: "logic_operation"
-            },
-
-            {
-              kind: "block",
-              type: "logic_negate"
-            },
-
-            {
-              kind: "block",
-              type: "logic_boolean"
-            },
-
-            {
-              kind: "block",
-              type: "logic_null"
-            },
-
-            {
-              kind: "block",
-              type: "logic_ternary"
-            }
-
-          ]
-        },
-
-
-        /*
-         * LOOPS
-         */
-
-        {
-          kind: "category",
-          name: C.loops,
-          categorystyle:
-            "loop_category",
-
-          contents: [
-
-            {
-              kind: "block",
-              type: "controls_repeat_ext"
-            },
-
-            {
-              kind: "block",
-              type: "controls_whileUntil"
-            },
-
-            {
-              kind: "block",
-              type: "controls_for"
-            },
-
-            {
-              kind: "block",
-              type: "controls_forEach"
-            },
-
-            {
-              kind: "block",
-              type: "controls_flow_statements"
-            }
-
-          ]
-        },
-
-
-        /*
-         * MATH
-         */
-
-        {
-          kind: "category",
-          name: C.math,
-          categorystyle:
-            "math_category",
-
-          contents: [
-
-            {
-              kind: "block",
-              type: "math_number"
-            },
-
-            {
-              kind: "block",
-              type: "math_arithmetic"
-            },
-
-            {
-              kind: "block",
-              type: "math_single"
-            },
-
-            {
-              kind: "block",
-              type: "math_trig"
-            },
-
-            {
-              kind: "block",
-              type: "math_constant"
-            },
-
-            {
-              kind: "block",
-              type: "math_number_property"
-            },
-
-            {
-              kind: "block",
-              type: "math_round"
-            },
-
-            {
-              kind: "block",
-              type: "math_modulo"
-            },
-
-            {
-              kind: "block",
-              type: "math_constrain"
-            },
-
-            {
-              kind: "block",
-              type: "math_random_int"
-            },
-
-            {
-              kind: "block",
-              type: "math_random_float"
-            }
-
-          ]
-        },
-
-
-        /*
-         * VARIABLES
-         */
-
-        {
-          kind: "category",
-          name: C.variables,
-          categorystyle:
-            "variable_category",
-          custom: "VARIABLE"
-        },
-
-
-        /*
-         * FUNCTIONS
-         */
-
-        {
-          kind: "category",
-          name: C.functions,
-          categorystyle:
-            "procedure_category",
-          custom: "PROCEDURE"
-        },
-
-
-        /*
-         * TEXT
-         */
-
-        {
-          kind: "category",
-          name: C.text,
-          categorystyle:
-            "text_category",
-
-          contents: [
-
-            {
-              kind: "block",
-              type: "text"
-            },
-
-            {
-              kind: "block",
-              type: "text_join"
-            },
-
-            {
-              kind: "block",
-              type: "text_length"
-            },
-
-            {
-              kind: "block",
-              type: "text_isEmpty"
-            },
-
-            {
-              kind: "block",
-              type: "text_print"
-            }
-
-          ]
-        }
-
-      ]
-    };
-
-
-    /*
-     * -----------------------
-     * CREATE WORKSPACE
-     * -----------------------
-     */
-
-    workspace =
-      Blockly.inject(
-
-        "blocklyDiv",
-
-        {
-
-          toolbox: toolbox,
-
-          trashcan: true,
-
-          scrollbars: true,
-
-          move: {
-
-            scrollbars: true,
-            drag: true,
-            wheel: true
-
-          },
-
-          zoom: {
-
-            controls: true,
-            wheel: true,
-            startScale: 1,
-            maxScale: 2,
-            minScale: 0.5,
-            scaleSpeed: 1.2
-
-          }
-
-        }
-
-      );
-
-
-    /*
-     * -----------------------
-     * CUSTOM PRINT
-     * -----------------------
-     */
-
-    javascript
-      .javascriptGenerator
-      .forBlock["text_print"] =
-
-      function(
-        block,
-        generator
-      ) {
-
-        const value =
-          generator.valueToCode(
-            block,
-            "TEXT",
-            javascript.Order.NONE
-          ) || "''";
-
-        return (
-          "printToLab(" +
-          value +
-          ");\n"
-        );
-
-      };
-
-
-    /*
-     * -----------------------
-     * OPERATION PROTECTION
-     * -----------------------
-     */
-
-    javascript
-      .javascriptGenerator
-      .STATEMENT_PREFIX =
-        "checkOperation();\n";
-
-
-    /*
-     * -----------------------
-     * RESTORE WORKSPACE
-     * -----------------------
-     */
-
-    restoreTemporaryWorkspace();
-
-
-    /*
-     * -----------------------
-     * SHOW LAB
-     * -----------------------
-     */
-
-    document.getElementById(
-      "loadingMessage"
-    ).style.display =
-      "none";
-
-    document.getElementById(
-      "labInterface"
-    ).style.display =
-      "block";
-
-
-    Blockly.svgResize(
-      workspace
-    );
-
-
-    clearConsole();
-
-    addConsoleLine(
-      T.ready,
-      "console-placeholder"
-    );
-
-  }
-
-
-  /*
-   * =======================================================
-   * CONSOLE
-   * =======================================================
-   */
-
-  const consoleOutput =
-    document.getElementById(
-      "consoleOutput"
-    );
-
-
-  function clearConsole() {
-
-    consoleOutput.textContent = "";
-
-  }
-
-
-  function addConsoleLine(
-    text,
-    className = ""
-  ) {
-
-    const line =
-      document.createElement("div");
-
-    line.textContent =
-      text;
-
-    if (className) {
-
-      line.className =
-        className;
-
-    }
-
-    consoleOutput.appendChild(
-      line
-    );
-
-  }
-
-
-  function writeConsole(value) {
-
-    addConsoleLine(
-      "> " + String(value)
-    );
-
-  }
-
-
-  /*
-   * =======================================================
-   * EXECUTION
-   * =======================================================
-   */
-
-  function runProgram() {
-
-    clearConsole();
-
-    document.getElementById(
-      "status"
-    ).textContent =
-      T.running;
-
-
-    let operations = 0;
-
-
-    function checkOperation() {
-
-      operations++;
-
-
-      if (
-        operations >
-        MAX_OPERATIONS
-      ) {
-
-        throw new Error(
-          T.limitError
-        );
-
-      }
-
-    }
-
-
-    try {
-
-      const code =
-        javascript
-          .javascriptGenerator
-          .workspaceToCode(
-            workspace
-          );
-
-
-      const execute =
-        new Function(
-
-          "printToLab",
-          "checkOperation",
-
-          '"use strict";\n' +
-          code
-
-        );
-
-
-      execute(
-        writeConsole,
-        checkOperation
-      );
-
-
-      if (
-        consoleOutput
-          .textContent
-          .trim() === ""
-      ) {
-
-        addConsoleLine(
-          T.noOutput,
-          "console-placeholder"
-        );
-
-      }
-
-
-      document.getElementById(
-        "status"
-      ).textContent =
-
-        T.completed +
-        " · " +
-        operations +
-        " " +
-        T.operations +
-        ".";
-
-    }
-
-
-    catch (error) {
-
-      clearConsole();
-
-
-      addConsoleLine(
-        T.error,
-        "console-error"
-      );
-
-
-      addConsoleLine(
-        error.message,
-        "console-error"
-      );
-
-
-      if (
-        error.message ===
+      throw new Error(
         T.limitError
-      ) {
-
-        addConsoleLine(
-          ""
-        );
-
-        addConsoleLine(
-          T.stoppedAutomatically,
-          "console-info"
-        );
-
-        addConsoleLine(
-          T.reviewLoop,
-          "console-info"
-        );
-
-      }
-
-
-      document.getElementById(
-        "status"
-      ).textContent =
-
-        T.stopped +
-        " · " +
-        operations +
-        " " +
-        T.operations +
-        ".";
-
-    }
-
-  }
-
-
-  /*
-   * =======================================================
-   * TEMPORARY WORKSPACE STORAGE
-   * =======================================================
-   */
-
-  function saveTemporaryWorkspace() {
-
-    if (!workspace) {
-      return;
-    }
-
-
-    try {
-
-      const state =
-        Blockly.serialization
-          .workspaces
-          .save(
-            workspace
-          );
-
-
-      sessionStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(state)
-      );
-
-    }
-
-    catch (error) {
-
-      console.error(
-        "Could not save workspace.",
-        error
       );
 
     }
@@ -1233,196 +1331,1846 @@
   }
 
 
-  function restoreTemporaryWorkspace() {
-
-    const saved =
-      sessionStorage.getItem(
-        STORAGE_KEY
-      );
+  try {
 
 
-    if (!saved) {
-      return;
-    }
-
-
-    try {
-
-      const state =
-        JSON.parse(saved);
-
-
-      Blockly.serialization
-        .workspaces
-        .load(
-          state,
+    const code =
+      javascript
+        .javascriptGenerator
+        .workspaceToCode(
           workspace
         );
 
 
-      sessionStorage.removeItem(
-        STORAGE_KEY
+    const execute =
+      new Function(
+
+        "printToLab",
+
+        "checkOperation",
+
+        '"use strict";\n' +
+        code
+
+      );
+
+
+    execute(
+
+      writeConsole,
+
+      checkOperation
+
+    );
+
+
+    if (
+      consoleOutput
+        .textContent
+        .trim() === ""
+    ) {
+
+      addConsoleLine(
+
+        T.noOutput,
+
+        "console-placeholder"
+
       );
 
     }
 
-    catch (error) {
 
-      console.error(
-        "Could not restore workspace.",
-        error
-      );
+    lastExecution = {
+
+      executed: true,
+
+      output:
+        consoleOutput
+          .innerText
+          .trim(),
+
+      operations:
+        operations,
+
+      success:
+        true
+
+    };
 
 
-      sessionStorage.removeItem(
-        STORAGE_KEY
-      );
+    document.getElementById(
+      "status"
+    ).textContent =
 
-    }
+      T.completed +
+      " · " +
+      operations +
+      " " +
+      T.operations +
+      ".";
 
   }
 
 
-  /*
-   * =======================================================
-   * LANGUAGE SWITCHING
-   * =======================================================
-   */
+  catch (error) {
 
-  function switchLanguage(
-    language
-  ) {
+
+    clearConsole();
+
+
+    addConsoleLine(
+
+      T.error,
+
+      "console-error"
+
+    );
+
+
+    addConsoleLine(
+
+      error.message,
+
+      "console-error"
+
+    );
+
 
     if (
-      language ===
-      currentLanguage
+      error.message ===
+      T.limitError
     ) {
+
+
+      addConsoleLine(
+        ""
+      );
+
+
+      addConsoleLine(
+
+        T.stoppedAutomatically,
+
+        "console-info"
+
+      );
+
+
+      addConsoleLine(
+
+        T.reviewLoop,
+
+        "console-info"
+
+      );
+
+    }
+
+
+    lastExecution = {
+
+      executed: true,
+
+      output:
+        consoleOutput
+          .innerText
+          .trim(),
+
+      operations:
+        operations,
+
+      success:
+        false
+
+    };
+
+
+    document.getElementById(
+      "status"
+    ).textContent =
+
+      T.stopped +
+      " · " +
+      operations +
+      " " +
+      T.operations +
+      ".";
+
+  }
+
+}
+
+
+/* =========================================================
+   TEMPORARY WORKSPACE STORAGE
+   ========================================================= */
+
+function saveTemporaryWorkspace() {
+
+
+  if (!workspace) {
+
+    return;
+
+  }
+
+
+  try {
+
+
+    const state =
+      Blockly.serialization
+        .workspaces
+        .save(
+          workspace
+        );
+
+
+    sessionStorage.setItem(
+
+      STORAGE_KEY,
+
+      JSON.stringify(
+        state
+      )
+
+    );
+
+  }
+
+
+  catch (error) {
+
+
+    console.error(
+
+      "Could not save workspace.",
+
+      error
+
+    );
+
+  }
+
+}
+
+
+function restoreTemporaryWorkspace() {
+
+
+  const saved =
+    sessionStorage.getItem(
+      STORAGE_KEY
+    );
+
+
+  if (!saved) {
+
+    return;
+
+  }
+
+
+  try {
+
+
+    const state =
+      JSON.parse(
+        saved
+      );
+
+
+    Blockly.serialization
+      .workspaces
+      .load(
+
+        state,
+
+        workspace
+
+      );
+
+
+    sessionStorage.removeItem(
+      STORAGE_KEY
+    );
+
+  }
+
+
+  catch (error) {
+
+
+    console.error(
+
+      "Could not restore workspace.",
+
+      error
+
+    );
+
+
+    sessionStorage.removeItem(
+      STORAGE_KEY
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   LANGUAGE SWITCHING
+   ========================================================= */
+
+function switchLanguage(
+  language
+) {
+
+
+  if (
+    language ===
+    currentLanguage
+  ) {
+
+    return;
+
+  }
+
+
+  saveTemporaryWorkspace();
+
+
+  const url =
+    new URL(
+      window.location.href
+    );
+
+
+  url.searchParams.set(
+
+    "lang",
+
+    language
+
+  );
+
+
+  window.location.href =
+    url.toString();
+
+}
+
+
+document.getElementById(
+  "langES"
+).addEventListener(
+
+  "click",
+
+  function() {
+
+    switchLanguage(
+      "es"
+    );
+
+  }
+
+);
+
+
+document.getElementById(
+  "langEN"
+).addEventListener(
+
+  "click",
+
+  function() {
+
+    switchLanguage(
+      "en"
+    );
+
+  }
+
+);
+
+
+/* =========================================================
+   STRUCTURE DETECTION
+   ========================================================= */
+
+function detectStructures() {
+
+
+  const blocks =
+    workspace.getAllBlocks(
+      false
+    );
+
+
+  const types =
+    blocks.map(
+      block =>
+        block.type
+    );
+
+
+  return {
+
+
+    variables:
+      types.some(
+
+        type =>
+          type.startsWith(
+            "variables_"
+          )
+
+      ),
+
+
+    conditionals:
+      types.includes(
+        "controls_if"
+      ),
+
+
+    loops:
+      types.some(
+
+        type =>
+
+          type ===
+            "controls_repeat_ext" ||
+
+          type ===
+            "controls_whileUntil" ||
+
+          type ===
+            "controls_for" ||
+
+          type ===
+            "controls_forEach"
+
+      ),
+
+
+    functions:
+      types.some(
+
+        type =>
+          type.startsWith(
+            "procedures_"
+          )
+
+      )
+
+  };
+
+}
+
+
+/* =========================================================
+   WORKSPACE → IMAGE
+   ========================================================= */
+
+function createWorkspaceImage() {
+
+
+  return new Promise(
+
+    (
+      resolve,
+      reject
+    ) => {
+
+
+      try {
+
+
+        const canvasGroup =
+          workspace.getCanvas();
+
+
+        const bbox =
+          canvasGroup.getBBox();
+
+
+        if (
+          bbox.width <= 0 ||
+          bbox.height <= 0
+        ) {
+
+
+          reject(
+
+            new Error(
+              currentLanguage === "es"
+                ? "El espacio de trabajo está vacío."
+                : "Workspace is empty."
+            )
+
+          );
+
+
+          return;
+
+        }
+
+
+        const padding = 30;
+
+
+        const exportWidth =
+          Math.ceil(
+            bbox.width +
+            padding * 2
+          );
+
+
+        const exportHeight =
+          Math.ceil(
+            bbox.height +
+            padding * 2
+          );
+
+
+        /*
+         * Clone Blockly SVG content.
+         */
+
+        const clone =
+          canvasGroup.cloneNode(
+            true
+          );
+
+
+        /*
+         * Build independent SVG.
+         */
+
+        const svg =
+          document.createElementNS(
+
+            "http://www.w3.org/2000/svg",
+
+            "svg"
+
+          );
+
+
+        svg.setAttribute(
+
+          "xmlns",
+
+          "http://www.w3.org/2000/svg"
+
+        );
+
+
+        svg.setAttribute(
+
+          "xmlns:xlink",
+
+          "http://www.w3.org/1999/xlink"
+
+        );
+
+
+        svg.setAttribute(
+
+          "width",
+
+          exportWidth
+
+        );
+
+
+        svg.setAttribute(
+
+          "height",
+
+          exportHeight
+
+        );
+
+
+        svg.setAttribute(
+
+          "viewBox",
+
+          `${bbox.x - padding} ${bbox.y - padding} ${exportWidth} ${exportHeight}`
+
+        );
+
+
+        /*
+         * White background.
+         */
+
+        const background =
+          document.createElementNS(
+
+            "http://www.w3.org/2000/svg",
+
+            "rect"
+
+          );
+
+
+        background.setAttribute(
+
+          "x",
+
+          bbox.x - padding
+
+        );
+
+
+        background.setAttribute(
+
+          "y",
+
+          bbox.y - padding
+
+        );
+
+
+        background.setAttribute(
+
+          "width",
+
+          exportWidth
+
+        );
+
+
+        background.setAttribute(
+
+          "height",
+
+          exportHeight
+
+        );
+
+
+        background.setAttribute(
+
+          "fill",
+
+          "#ffffff"
+
+        );
+
+
+        svg.appendChild(
+          background
+        );
+
+
+        /*
+         * Blockly text styling.
+         *
+         * We explicitly provide essential styles instead
+         * of depending entirely on cross-origin stylesheets.
+         */
+
+        const style =
+          document.createElementNS(
+
+            "http://www.w3.org/2000/svg",
+
+            "style"
+
+          );
+
+
+        style.textContent = `
+
+          .blocklyText {
+            fill: #fff;
+            font-family: sans-serif;
+            font-size: 11pt;
+          }
+
+          .blocklyNonEditableText > text,
+          .blocklyEditableText > text {
+            fill: #575E75;
+          }
+
+          .blocklyDropdownText {
+            fill: #fff !important;
+          }
+
+          .blocklyIconShape {
+            fill: #00f;
+            stroke: #fff;
+            stroke-width: 1px;
+          }
+
+          .blocklyIconSymbol {
+            fill: #fff;
+          }
+
+        `;
+
+
+        svg.appendChild(
+          style
+        );
+
+
+        svg.appendChild(
+          clone
+        );
+
+
+        /*
+         * Serialize SVG.
+         */
+
+        const serializer =
+          new XMLSerializer();
+
+
+        const source =
+          serializer.serializeToString(
+            svg
+          );
+
+
+        const blob =
+          new Blob(
+
+            [source],
+
+            {
+              type:
+                "image/svg+xml;charset=utf-8"
+            }
+
+          );
+
+
+        const url =
+          URL.createObjectURL(
+            blob
+          );
+
+
+        const image =
+          new Image();
+
+
+        image.onload =
+          function() {
+
+
+            URL.revokeObjectURL(
+              url
+            );
+
+
+            resolve({
+
+              image:
+                image,
+
+              width:
+                exportWidth,
+
+              height:
+                exportHeight
+
+            });
+
+          };
+
+
+        image.onerror =
+          function() {
+
+
+            URL.revokeObjectURL(
+              url
+            );
+
+
+            reject(
+
+              new Error(
+
+                currentLanguage === "es"
+
+                  ? "No fue posible renderizar los bloques."
+
+                  : "Could not render Blockly blocks."
+
+              )
+
+            );
+
+          };
+
+
+        image.src =
+          url;
+
+      }
+
+
+      catch (error) {
+
+        reject(
+          error
+        );
+
+      }
+
+    }
+
+  );
+
+}
+
+
+/* =========================================================
+   TEXT WRAPPING
+   ========================================================= */
+
+function drawWrappedText(
+
+  context,
+
+  text,
+
+  x,
+
+  y,
+
+  maxWidth,
+
+  lineHeight
+
+) {
+
+
+  const paragraphs =
+    String(text).split(
+      "\n"
+    );
+
+
+  let currentY =
+    y;
+
+
+  paragraphs.forEach(
+
+    paragraph => {
+
+
+      if (
+        paragraph.trim() === ""
+      ) {
+
+
+        currentY +=
+          lineHeight;
+
+
+        return;
+
+      }
+
+
+      const words =
+        paragraph.split(
+          " "
+        );
+
+
+      let line = "";
+
+
+      for (
+        let i = 0;
+        i < words.length;
+        i++
+      ) {
+
+
+        const testLine =
+          line +
+          words[i] +
+          " ";
+
+
+        const measured =
+          context.measureText(
+            testLine
+          ).width;
+
+
+        if (
+          measured >
+            maxWidth &&
+          i > 0
+        ) {
+
+
+          context.fillText(
+
+            line.trim(),
+
+            x,
+
+            currentY
+
+          );
+
+
+          line =
+            words[i] +
+            " ";
+
+
+          currentY +=
+            lineHeight;
+
+        }
+
+
+        else {
+
+
+          line =
+            testLine;
+
+        }
+
+      }
+
+
+      context.fillText(
+
+        line.trim(),
+
+        x,
+
+        currentY
+
+      );
+
+
+      currentY +=
+        lineHeight;
+
+    }
+
+  );
+
+
+  return currentY;
+
+}
+
+
+/* =========================================================
+   GENERATE EVIDENCE
+   ========================================================= */
+
+async function generateEvidence() {
+
+
+  if (!workspace) {
+
+    return;
+
+  }
+
+
+  document.getElementById(
+    "status"
+  ).textContent =
+    T.generatingEvidence;
+
+
+  try {
+
+
+    const blockData =
+      await createWorkspaceImage();
+
+
+    const structures =
+      detectStructures();
+
+
+    /* -----------------------------------------------------
+       PAGE DIMENSIONS
+       ----------------------------------------------------- */
+
+    const PAGE_WIDTH =
+      1200;
+
+
+    const SIDE_PADDING =
+      70;
+
+
+    const CONTENT_WIDTH =
+      PAGE_WIDTH -
+      SIDE_PADDING * 2;
+
+
+    /*
+     * Scale algorithm only when necessary.
+     */
+
+    const algorithmScale =
+      Math.min(
+
+        1,
+
+        CONTENT_WIDTH /
+          blockData.width
+
+      );
+
+
+    const algorithmWidth =
+      blockData.width *
+      algorithmScale;
+
+
+    const algorithmHeight =
+      blockData.height *
+      algorithmScale;
+
+
+    const outputText =
+
+      lastExecution.executed
+
+        ? (
+            lastExecution.output ||
+            T.noOutput
+          )
+
+        : T.notExecuted;
+
+
+    const outputLineCount =
+      Math.max(
+
+        1,
+
+        outputText
+          .split("\n")
+          .length
+
+      );
+
+
+    const outputHeight =
+      Math.max(
+
+        130,
+
+        outputLineCount *
+          30 +
+          60
+
+      );
+
+
+    const HEADER_HEIGHT =
+      150;
+
+
+    const ALGORITHM_TITLE_HEIGHT =
+      70;
+
+
+    const STRUCTURES_HEIGHT =
+      230;
+
+
+    const FOOTER_HEIGHT =
+      100;
+
+
+    const PAGE_HEIGHT =
+      Math.ceil(
+
+        HEADER_HEIGHT +
+
+        ALGORITHM_TITLE_HEIGHT +
+
+        algorithmHeight +
+
+        outputHeight +
+
+        STRUCTURES_HEIGHT +
+
+        FOOTER_HEIGHT +
+
+        150
+
+      );
+
+
+    /* -----------------------------------------------------
+       CANVAS
+       ----------------------------------------------------- */
+
+    const evidenceCanvas =
+      document.createElement(
+        "canvas"
+      );
+
+
+    evidenceCanvas.width =
+      PAGE_WIDTH;
+
+
+    evidenceCanvas.height =
+      PAGE_HEIGHT;
+
+
+    const ctx =
+      evidenceCanvas.getContext(
+        "2d"
+      );
+
+
+    /* BACKGROUND */
+
+    ctx.fillStyle =
+      "#ffffff";
+
+
+    ctx.fillRect(
+
+      0,
+
+      0,
+
+      PAGE_WIDTH,
+
+      PAGE_HEIGHT
+
+    );
+
+
+    /* -----------------------------------------------------
+       HEADER
+       ----------------------------------------------------- */
+
+    ctx.fillStyle =
+      "#202124";
+
+
+    ctx.font =
+      "bold 38px Arial";
+
+
+    ctx.fillText(
+
+      "Algorithm Lab",
+
+      SIDE_PADDING,
+
+      65
+
+    );
+
+
+    ctx.fillStyle =
+      "#5f6368";
+
+
+    ctx.font =
+      "20px Arial";
+
+
+    ctx.fillText(
+
+      T.algorithmEvidence,
+
+      SIDE_PADDING,
+
+      103
+
+    );
+
+
+    ctx.textAlign =
+      "right";
+
+
+    ctx.font =
+      "18px Arial";
+
+
+    ctx.fillText(
+
+      "v0.6",
+
+      PAGE_WIDTH -
+        SIDE_PADDING,
+
+      65
+
+    );
+
+
+    ctx.textAlign =
+      "left";
+
+
+    ctx.strokeStyle =
+      "#dadce0";
+
+
+    ctx.lineWidth =
+      2;
+
+
+    ctx.beginPath();
+
+
+    ctx.moveTo(
+
+      SIDE_PADDING,
+
+      130
+
+    );
+
+
+    ctx.lineTo(
+
+      PAGE_WIDTH -
+        SIDE_PADDING,
+
+      130
+
+    );
+
+
+    ctx.stroke();
+
+
+    /* -----------------------------------------------------
+       ALGORITHM
+       ----------------------------------------------------- */
+
+    let y =
+      HEADER_HEIGHT;
+
+
+    ctx.fillStyle =
+      "#202124";
+
+
+    ctx.font =
+      "bold 22px Arial";
+
+
+    ctx.fillText(
+
+      T.algorithm,
+
+      SIDE_PADDING,
+
+      y + 35
+
+    );
+
+
+    y +=
+      ALGORITHM_TITLE_HEIGHT;
+
+
+    ctx.fillStyle =
+      "#f8f9fa";
+
+
+    ctx.fillRect(
+
+      SIDE_PADDING,
+
+      y,
+
+      CONTENT_WIDTH,
+
+      algorithmHeight + 40
+
+    );
+
+
+    const algorithmX =
+
+      SIDE_PADDING +
+
+      (
+        CONTENT_WIDTH -
+        algorithmWidth
+      ) / 2;
+
+
+    ctx.drawImage(
+
+      blockData.image,
+
+      algorithmX,
+
+      y + 20,
+
+      algorithmWidth,
+
+      algorithmHeight
+
+    );
+
+
+    y +=
+      algorithmHeight +
+      85;
+
+
+    /* -----------------------------------------------------
+       OUTPUT
+       ----------------------------------------------------- */
+
+    ctx.fillStyle =
+      "#202124";
+
+
+    ctx.font =
+      "bold 22px Arial";
+
+
+    ctx.fillText(
+
+      T.output,
+
+      SIDE_PADDING,
+
+      y
+
+    );
+
+
+    y +=
+      40;
+
+
+    ctx.fillStyle =
+      "#202124";
+
+
+    ctx.font =
+      '19px "Courier New"';
+
+
+    y =
+      drawWrappedText(
+
+        ctx,
+
+        outputText,
+
+        SIDE_PADDING,
+
+        y,
+
+        CONTENT_WIDTH,
+
+        30
+
+      );
+
+
+    y +=
+      35;
+
+
+    /* -----------------------------------------------------
+       DIVIDER
+       ----------------------------------------------------- */
+
+    ctx.strokeStyle =
+      "#dadce0";
+
+
+    ctx.beginPath();
+
+
+    ctx.moveTo(
+
+      SIDE_PADDING,
+
+      y
+
+    );
+
+
+    ctx.lineTo(
+
+      PAGE_WIDTH -
+        SIDE_PADDING,
+
+      y
+
+    );
+
+
+    ctx.stroke();
+
+
+    y +=
+      50;
+
+
+    /* -----------------------------------------------------
+       STRUCTURES
+       ----------------------------------------------------- */
+
+    ctx.fillStyle =
+      "#202124";
+
+
+    ctx.font =
+      "bold 22px Arial";
+
+
+    ctx.fillText(
+
+      T.structures,
+
+      SIDE_PADDING,
+
+      y
+
+    );
+
+
+    y +=
+      42;
+
+
+    ctx.font =
+      "19px Arial";
+
+
+    const structureRows = [
+
+      [
+        T.variables,
+        structures.variables
+      ],
+
+      [
+        T.conditionals,
+        structures.conditionals
+      ],
+
+      [
+        T.loops,
+        structures.loops
+      ],
+
+      [
+        T.functions,
+        structures.functions
+      ]
+
+    ];
+
+
+    structureRows.forEach(
+
+      row => {
+
+
+        ctx.fillStyle =
+          "#202124";
+
+
+        ctx.fillText(
+
+          row[0],
+
+          SIDE_PADDING,
+
+          y
+
+        );
+
+
+        ctx.font =
+          "bold 19px Arial";
+
+
+        ctx.fillText(
+
+          row[1]
+            ? T.yes
+            : T.no,
+
+          SIDE_PADDING +
+            250,
+
+          y
+
+        );
+
+
+        ctx.font =
+          "19px Arial";
+
+
+        y +=
+          32;
+
+      }
+
+    );
+
+
+    y +=
+      20;
+
+
+    /* -----------------------------------------------------
+       EXECUTION INFORMATION
+       ----------------------------------------------------- */
+
+    if (
+      lastExecution.executed
+    ) {
+
+
+      ctx.fillStyle =
+        "#5f6368";
+
+
+      ctx.font =
+        "17px Arial";
+
+
+      ctx.fillText(
+
+        (
+          lastExecution.success
+            ? T.completed
+            : T.stopped
+        ) +
+
+        " · " +
+
+        lastExecution.operations +
+
+        " " +
+
+        T.operations,
+
+        SIDE_PADDING,
+
+        y
+
+      );
+
+    }
+
+
+    /* -----------------------------------------------------
+       FOOTER
+       ----------------------------------------------------- */
+
+    const now =
+      new Date();
+
+
+    const formattedDate =
+      now.toLocaleString(
+
+        currentLanguage === "es"
+
+          ? "es-MX"
+
+          : "en-US"
+
+      );
+
+
+    ctx.fillStyle =
+      "#5f6368";
+
+
+    ctx.font =
+      "16px Arial";
+
+
+    ctx.fillText(
+
+      T.generated +
+      ": " +
+      formattedDate,
+
+      SIDE_PADDING,
+
+      PAGE_HEIGHT -
+        45
+
+    );
+
+
+    ctx.textAlign =
+      "right";
+
+
+    ctx.fillText(
+
+      "Algorithm Lab · v0.6",
+
+      PAGE_WIDTH -
+        SIDE_PADDING,
+
+      PAGE_HEIGHT -
+        45
+
+    );
+
+
+    ctx.textAlign =
+      "left";
+
+
+    /* -----------------------------------------------------
+       PNG
+       ----------------------------------------------------- */
+
+    evidenceCanvas.toBlob(
+
+      function(blob) {
+
+
+        if (!blob) {
+
+
+          document.getElementById(
+            "status"
+          ).textContent =
+            T.evidenceError;
+
+
+          return;
+
+        }
+
+
+        const url =
+          URL.createObjectURL(
+            blob
+          );
+
+
+        const link =
+          document.createElement(
+            "a"
+          );
+
+
+        const timestamp =
+          new Date()
+            .toISOString()
+            .replace(
+              /[:.]/g,
+              "-"
+            );
+
+
+        link.href =
+          url;
+
+
+        link.download =
+
+          "algorithm_evidence_" +
+          timestamp +
+          ".png";
+
+
+        document.body.appendChild(
+          link
+        );
+
+
+        link.click();
+
+
+        link.remove();
+
+
+        setTimeout(
+
+          function() {
+
+            URL.revokeObjectURL(
+              url
+            );
+
+          },
+
+          1000
+
+        );
+
+
+        document.getElementById(
+          "status"
+        ).textContent =
+          T.evidenceGenerated;
+
+      },
+
+      "image/png"
+
+    );
+
+  }
+
+
+  catch (error) {
+
+
+    console.error(
+      error
+    );
+
+
+    document.getElementById(
+      "status"
+    ).textContent =
+
+      T.evidenceError +
+      " " +
+      error.message;
+
+  }
+
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+document.getElementById(
+  "runButton"
+).addEventListener(
+
+  "click",
+
+  runProgram
+
+);
+
+
+document.getElementById(
+  "clearButton"
+).addEventListener(
+
+  "click",
+
+  function() {
+
+
+    clearConsole();
+
+
+    addConsoleLine(
+
+      T.consoleCleared,
+
+      "console-placeholder"
+
+    );
+
+  }
+
+);
+
+
+document.getElementById(
+  "resetButton"
+).addEventListener(
+
+  "click",
+
+  function() {
+
+
+    if (!workspace) {
 
       return;
 
     }
 
 
-    saveTemporaryWorkspace();
+    workspace.clear();
 
 
-    const url =
-      new URL(
-        window.location.href
-      );
+    clearConsole();
 
 
-    url.searchParams.set(
-      "lang",
-      language
+    lastExecution = {
+
+      executed: false,
+
+      output: "",
+
+      operations: 0,
+
+      success: false
+
+    };
+
+
+    addConsoleLine(
+
+      T.ready,
+
+      "console-placeholder"
+
     );
 
 
-    window.location.href =
-      url.toString();
+    document.getElementById(
+      "status"
+    ).textContent =
+      T.workspaceReset;
 
   }
 
-
-  document.getElementById(
-    "langES"
-  ).addEventListener(
-
-    "click",
-
-    function() {
-
-      switchLanguage("es");
-
-    }
-
-  );
+);
 
 
-  document.getElementById(
-    "langEN"
-  ).addEventListener(
+document.getElementById(
+  "evidenceButton"
+).addEventListener(
 
-    "click",
+  "click",
 
-    function() {
+  generateEvidence
 
-      switchLanguage("en");
-
-    }
-
-  );
-
-
-  /*
-   * =======================================================
-   * BUTTONS
-   * =======================================================
-   */
-
-  document.getElementById(
-    "runButton"
-  ).addEventListener(
-
-    "click",
-
-    runProgram
-
-  );
-
-
-  document.getElementById(
-    "clearButton"
-  ).addEventListener(
-
-    "click",
-
-    function() {
-
-      clearConsole();
-
-      addConsoleLine(
-        T.consoleCleared,
-        "console-placeholder"
-      );
-
-    }
-
-  );
-
-
-  document.getElementById(
-    "resetButton"
-  ).addEventListener(
-
-    "click",
-
-    function() {
-
-      if (!workspace) {
-        return;
-      }
-
-
-      workspace.clear();
-
-      clearConsole();
-
-
-      addConsoleLine(
-        T.ready,
-        "console-placeholder"
-      );
-
-
-      document.getElementById(
-        "status"
-      ).textContent =
-        T.workspaceReset;
-
-    }
-
-  );
+);
 
 </script>
 
