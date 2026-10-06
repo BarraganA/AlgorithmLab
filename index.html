@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Algorithm Lab</title>
+  <title>Algorithm Lab v0.4</title>
 
   <!-- Blockly -->
   <script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
@@ -25,43 +25,44 @@
     }
 
     header {
-      background: #ffffff;
+      background: #fff;
       border-bottom: 1px solid #dadce0;
-      padding: 16px 24px;
+      padding: 14px 22px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 20px;
     }
 
-    header h1 {
+    .title-group h1 {
       margin: 0;
       font-size: 22px;
     }
 
-    header span {
-      font-size: 14px;
+    .title-group p {
+      margin: 4px 0 0;
       color: #5f6368;
+      font-size: 13px;
+    }
+
+    .version {
+      color: #5f6368;
+      font-size: 13px;
     }
 
     .lab-container {
-      padding: 20px;
+      padding: 16px;
     }
 
     .workspace-layout {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 300px;
+      grid-template-columns: minmax(0, 1fr) 310px;
       gap: 16px;
-    }
-
-    .workspace-panel,
-    .console-panel {
-      min-width: 0;
     }
 
     #blocklyDiv {
       width: 100%;
-      height: 600px;
+      height: 620px;
       background: white;
       border: 1px solid #dadce0;
       border-radius: 10px;
@@ -69,12 +70,13 @@
     }
 
     .console-panel {
+      min-width: 0;
+      min-height: 620px;
       background: #202124;
       color: #f1f3f4;
       border-radius: 10px;
       display: flex;
       flex-direction: column;
-      min-height: 600px;
       overflow: hidden;
     }
 
@@ -83,17 +85,18 @@
       border-bottom: 1px solid #3c4043;
       font-size: 13px;
       font-weight: bold;
-      letter-spacing: 0.5px;
+      letter-spacing: .5px;
     }
 
     #consoleOutput {
-      padding: 16px;
       flex: 1;
+      padding: 16px;
       font-family: Consolas, "Courier New", monospace;
-      font-size: 15px;
+      font-size: 14px;
       line-height: 1.6;
       white-space: pre-wrap;
       overflow-wrap: anywhere;
+      overflow-y: auto;
     }
 
     .console-placeholder {
@@ -132,19 +135,22 @@
 
     #runButton {
       background: #1a73e8;
-      color: white;
       border-color: #1a73e8;
+      color: white;
     }
 
     #runButton:hover {
       background: #1765cc;
     }
 
-    .status {
+    .status-row {
       margin-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
       font-size: 13px;
       color: #5f6368;
-      min-height: 20px;
     }
 
     @media (max-width: 850px) {
@@ -153,7 +159,7 @@
       }
 
       #blocklyDiv {
-        height: 520px;
+        height: 540px;
       }
 
       .console-panel {
@@ -166,17 +172,21 @@
 <body>
 
 <header>
-  <h1>Algorithm Lab</h1>
-  <span>Programming Workspace</span>
+  <div class="title-group">
+    <h1>Algorithm Lab</h1>
+    <p>Build, test and explore algorithms using blocks.</p>
+  </div>
+
+  <div class="version">
+    v0.4
+  </div>
 </header>
 
 <div class="lab-container">
 
   <div class="workspace-layout">
 
-    <div class="workspace-panel">
-      <div id="blocklyDiv"></div>
-    </div>
+    <div id="blocklyDiv"></div>
 
     <div class="console-panel">
 
@@ -193,16 +203,35 @@
   </div>
 
   <div class="controls">
-    <button id="runButton">▶ Run</button>
-    <button id="clearButton">Clear console</button>
-    <button id="resetButton">↻ Reset workspace</button>
+
+    <button id="runButton">
+      ▶ Run
+    </button>
+
+    <button id="clearButton">
+      Clear console
+    </button>
+
+    <button id="resetButton">
+      ↻ Reset workspace
+    </button>
+
   </div>
 
-  <div class="status" id="status">
-    Build an algorithm and press Run.
+  <div class="status-row">
+
+    <span id="status">
+      Build an algorithm and press Run.
+    </span>
+
+    <span>
+      Maximum operations: 10,000
+    </span>
+
   </div>
 
 </div>
+
 
 <script>
 
@@ -226,6 +255,12 @@
     kind: "categoryToolbox",
 
     contents: [
+
+      /*
+       * -----------------------
+       * LOGIC
+       * -----------------------
+       */
 
       {
         kind: "category",
@@ -257,10 +292,27 @@
           {
             kind: "block",
             type: "logic_boolean"
+          },
+
+          {
+            kind: "block",
+            type: "logic_null"
+          },
+
+          {
+            kind: "block",
+            type: "logic_ternary"
           }
 
         ]
       },
+
+
+      /*
+       * -----------------------
+       * LOOPS
+       * -----------------------
+       */
 
       {
         kind: "category",
@@ -282,10 +334,27 @@
           {
             kind: "block",
             type: "controls_for"
+          },
+
+          {
+            kind: "block",
+            type: "controls_forEach"
+          },
+
+          {
+            kind: "block",
+            type: "controls_flow_statements"
           }
 
         ]
       },
+
+
+      /*
+       * -----------------------
+       * MATH
+       * -----------------------
+       */
 
       {
         kind: "category",
@@ -306,16 +375,58 @@
 
           {
             kind: "block",
-            type: "math_modulo"
+            type: "math_single"
+          },
+
+          {
+            kind: "block",
+            type: "math_trig"
+          },
+
+          {
+            kind: "block",
+            type: "math_constant"
+          },
+
+          {
+            kind: "block",
+            type: "math_number_property"
           },
 
           {
             kind: "block",
             type: "math_round"
+          },
+
+          {
+            kind: "block",
+            type: "math_modulo"
+          },
+
+          {
+            kind: "block",
+            type: "math_constrain"
+          },
+
+          {
+            kind: "block",
+            type: "math_random_int"
+          },
+
+          {
+            kind: "block",
+            type: "math_random_float"
           }
 
         ]
       },
+
+
+      /*
+       * -----------------------
+       * VARIABLES
+       * -----------------------
+       */
 
       {
         kind: "category",
@@ -324,9 +435,30 @@
         custom: "VARIABLE"
       },
 
+
+      /*
+       * -----------------------
+       * FUNCTIONS
+       * -----------------------
+       */
+
       {
         kind: "category",
-        name: "Text",
+        name: "Functions",
+        categorystyle: "procedure_category",
+        custom: "PROCEDURE"
+      },
+
+
+      /*
+       * -----------------------
+       * TEXT / OUTPUT
+       * -----------------------
+       */
+
+      {
+        kind: "category",
+        name: "Text / Output",
         categorystyle: "text_category",
 
         contents: [
@@ -334,6 +466,21 @@
           {
             kind: "block",
             type: "text"
+          },
+
+          {
+            kind: "block",
+            type: "text_join"
+          },
+
+          {
+            kind: "block",
+            type: "text_length"
+          },
+
+          {
+            kind: "block",
+            type: "text_isEmpty"
           },
 
           {
@@ -367,18 +514,22 @@
       scrollbars: true,
 
       move: {
+
         scrollbars: true,
         drag: true,
         wheel: true
+
       },
 
       zoom: {
+
         controls: true,
         wheel: true,
         startScale: 1,
         maxScale: 2,
         minScale: 0.5,
         scaleSpeed: 1.2
+
       }
 
     }
@@ -388,7 +539,7 @@
 
   /*
    * =======================================================
-   * INTERFACE
+   * CONSOLE
    * =======================================================
    */
 
@@ -406,7 +557,10 @@
   }
 
 
-  function addConsoleLine(text, className = "") {
+  function addConsoleLine(
+    text,
+    className = ""
+  ) {
 
     const line =
       document.createElement("div");
@@ -414,7 +568,9 @@
     line.textContent = text;
 
     if (className) {
+
       line.className = className;
+
     }
 
     consoleOutput.appendChild(line);
@@ -458,25 +614,12 @@
 
   /*
    * =======================================================
-   * LOOP PROTECTION
-   * =======================================================
-   *
-   * Blockly supports statementPrefix.
-   *
-   * This inserts:
-   *
-   *    checkTimeout();
-   *
-   * before generated statements.
-   *
-   * Therefore a repeating program continually checks
-   * whether it has exceeded the allowed operation count.
-   *
+   * OPERATION PROTECTION
    * =======================================================
    */
 
   javascript.javascriptGenerator.STATEMENT_PREFIX =
-    "checkTimeout();\n";
+    "checkOperation();\n";
 
 
   /*
@@ -496,15 +639,20 @@
     let operations = 0;
 
 
-    function checkTimeout() {
+    function checkOperation() {
 
       operations++;
 
-      if (operations > MAX_OPERATIONS) {
+
+      if (
+        operations >
+        MAX_OPERATIONS
+      ) {
 
         throw new Error(
           "Maximum operation limit reached. " +
-          "Check for a possible infinite loop."
+          "Check for a possible infinite loop " +
+          "or recursive function."
         );
 
       }
@@ -515,7 +663,7 @@
     try {
 
       /*
-       * Generate JavaScript from Blockly.
+       * Generate JavaScript
        */
 
       const code =
@@ -525,17 +673,14 @@
 
 
       /*
-       * Create isolated execution function.
-       *
-       * The generated program only receives the functions
-       * that we explicitly provide.
+       * Execute generated program
        */
 
       const execute =
         new Function(
 
           "printToLab",
-          "checkTimeout",
+          "checkOperation",
 
           '"use strict";\n' +
           code
@@ -543,18 +688,14 @@
         );
 
 
-      /*
-       * Execute program.
-       */
-
       execute(
         writeConsole,
-        checkTimeout
+        checkOperation
       );
 
 
       /*
-       * If the algorithm produced no output:
+       * Program with no print
        */
 
       if (
@@ -570,20 +711,23 @@
 
 
       status.textContent =
-        "Execution completed. " +
+        "Execution completed · " +
         operations +
         " operations.";
 
     }
 
+
     catch (error) {
 
       clearConsole();
+
 
       addConsoleLine(
         "ERROR",
         "console-error"
       );
+
 
       addConsoleLine(
         error.message,
@@ -608,7 +752,7 @@
         );
 
         addConsoleLine(
-          "Review your loop condition.",
+          "Review your loop condition or recursive function.",
           "console-info"
         );
 
@@ -616,7 +760,7 @@
 
 
       status.textContent =
-        "Execution stopped after " +
+        "Execution stopped · " +
         operations +
         " operations.";
 
