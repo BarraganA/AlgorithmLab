@@ -4,13 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Algorithm Lab v0.4</title>
+  <title>Algorithm Lab v0.5</title>
 
-  <!-- Blockly -->
+  <!-- Blockly core -->
   <script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
   <script src="https://unpkg.com/blockly/blocks_compressed.js"></script>
   <script src="https://unpkg.com/blockly/javascript_compressed.js"></script>
-  <script src="https://unpkg.com/blockly/msg/en.js"></script>
+
+  <!-- Blockly language will be loaded dynamically -->
 
   <style>
     * {
@@ -32,6 +33,7 @@
       justify-content: space-between;
       align-items: center;
       gap: 20px;
+      flex-wrap: wrap;
     }
 
     .title-group h1 {
@@ -43,6 +45,36 @@
       margin: 4px 0 0;
       color: #5f6368;
       font-size: 13px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .language-selector {
+      display: flex;
+      background: #f1f3f4;
+      border-radius: 8px;
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .language-selector button {
+      border: none;
+      background: transparent;
+      padding: 7px 11px;
+      border-radius: 6px;
+      min-height: auto;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .language-selector button.active {
+      background: white;
+      color: #1a73e8;
+      box-shadow: 0 1px 3px rgba(0,0,0,.15);
     }
 
     .version {
@@ -118,7 +150,7 @@
       gap: 10px;
     }
 
-    button {
+    .control-button {
       border: 1px solid #dadce0;
       background: white;
       color: #202124;
@@ -129,7 +161,7 @@
       cursor: pointer;
     }
 
-    button:hover {
+    .control-button:hover {
       background: #f1f3f4;
     }
 
@@ -153,6 +185,12 @@
       color: #5f6368;
     }
 
+    #loadingMessage {
+      padding: 40px;
+      text-align: center;
+      color: #5f6368;
+    }
+
     @media (max-width: 850px) {
       .workspace-layout {
         grid-template-columns: 1fr;
@@ -172,61 +210,91 @@
 <body>
 
 <header>
+
   <div class="title-group">
     <h1>Algorithm Lab</h1>
-    <p>Build, test and explore algorithms using blocks.</p>
+    <p id="subtitle">
+      Build, test and explore algorithms using blocks.
+    </p>
   </div>
 
-  <div class="version">
-    v0.4
-  </div>
-</header>
+  <div class="header-right">
 
-<div class="lab-container">
+    <div class="language-selector">
+      <button id="langES" type="button">ES</button>
+      <button id="langEN" type="button">EN</button>
+    </div>
 
-  <div class="workspace-layout">
-
-    <div id="blocklyDiv"></div>
-
-    <div class="console-panel">
-
-      <div class="console-header">
-        CONSOLE
-      </div>
-
-      <div id="consoleOutput">
-        <span class="console-placeholder">Ready.</span>
-      </div>
-
+    <div class="version">
+      v0.5
     </div>
 
   </div>
 
-  <div class="controls">
+</header>
 
-    <button id="runButton">
-      ▶ Run
-    </button>
+<div class="lab-container">
 
-    <button id="clearButton">
-      Clear console
-    </button>
-
-    <button id="resetButton">
-      ↻ Reset workspace
-    </button>
-
+  <div id="loadingMessage">
+    Loading Algorithm Lab...
   </div>
 
-  <div class="status-row">
+  <div id="labInterface" style="display:none;">
 
-    <span id="status">
-      Build an algorithm and press Run.
-    </span>
+    <div class="workspace-layout">
 
-    <span>
-      Maximum operations: 10,000
-    </span>
+      <div id="blocklyDiv"></div>
+
+      <div class="console-panel">
+
+        <div
+          class="console-header"
+          id="consoleTitle"
+        >
+          CONSOLE
+        </div>
+
+        <div id="consoleOutput"></div>
+
+      </div>
+
+    </div>
+
+    <div class="controls">
+
+      <button
+        id="runButton"
+        class="control-button"
+        type="button"
+      >
+        ▶ Run
+      </button>
+
+      <button
+        id="clearButton"
+        class="control-button"
+        type="button"
+      >
+        Clear console
+      </button>
+
+      <button
+        id="resetButton"
+        class="control-button"
+        type="button"
+      >
+        ↻ Reset workspace
+      </button>
+
+    </div>
+
+    <div class="status-row">
+
+      <span id="status"></span>
+
+      <span id="operationLimit"></span>
+
+    </div>
 
   </div>
 
@@ -243,298 +311,682 @@
 
   const MAX_OPERATIONS = 10000;
 
-
-  /*
-   * =======================================================
-   * TOOLBOX
-   * =======================================================
-   */
-
-  const toolbox = {
-
-    kind: "categoryToolbox",
-
-    contents: [
-
-      /*
-       * -----------------------
-       * LOGIC
-       * -----------------------
-       */
-
-      {
-        kind: "category",
-        name: "Logic",
-        categorystyle: "logic_category",
-
-        contents: [
-
-          {
-            kind: "block",
-            type: "controls_if"
-          },
-
-          {
-            kind: "block",
-            type: "logic_compare"
-          },
-
-          {
-            kind: "block",
-            type: "logic_operation"
-          },
-
-          {
-            kind: "block",
-            type: "logic_negate"
-          },
-
-          {
-            kind: "block",
-            type: "logic_boolean"
-          },
-
-          {
-            kind: "block",
-            type: "logic_null"
-          },
-
-          {
-            kind: "block",
-            type: "logic_ternary"
-          }
-
-        ]
-      },
-
-
-      /*
-       * -----------------------
-       * LOOPS
-       * -----------------------
-       */
-
-      {
-        kind: "category",
-        name: "Loops",
-        categorystyle: "loop_category",
-
-        contents: [
-
-          {
-            kind: "block",
-            type: "controls_repeat_ext"
-          },
-
-          {
-            kind: "block",
-            type: "controls_whileUntil"
-          },
-
-          {
-            kind: "block",
-            type: "controls_for"
-          },
-
-          {
-            kind: "block",
-            type: "controls_forEach"
-          },
-
-          {
-            kind: "block",
-            type: "controls_flow_statements"
-          }
-
-        ]
-      },
-
-
-      /*
-       * -----------------------
-       * MATH
-       * -----------------------
-       */
-
-      {
-        kind: "category",
-        name: "Math",
-        categorystyle: "math_category",
-
-        contents: [
-
-          {
-            kind: "block",
-            type: "math_number"
-          },
-
-          {
-            kind: "block",
-            type: "math_arithmetic"
-          },
-
-          {
-            kind: "block",
-            type: "math_single"
-          },
-
-          {
-            kind: "block",
-            type: "math_trig"
-          },
-
-          {
-            kind: "block",
-            type: "math_constant"
-          },
-
-          {
-            kind: "block",
-            type: "math_number_property"
-          },
-
-          {
-            kind: "block",
-            type: "math_round"
-          },
-
-          {
-            kind: "block",
-            type: "math_modulo"
-          },
-
-          {
-            kind: "block",
-            type: "math_constrain"
-          },
-
-          {
-            kind: "block",
-            type: "math_random_int"
-          },
-
-          {
-            kind: "block",
-            type: "math_random_float"
-          }
-
-        ]
-      },
-
-
-      /*
-       * -----------------------
-       * VARIABLES
-       * -----------------------
-       */
-
-      {
-        kind: "category",
-        name: "Variables",
-        categorystyle: "variable_category",
-        custom: "VARIABLE"
-      },
-
-
-      /*
-       * -----------------------
-       * FUNCTIONS
-       * -----------------------
-       */
-
-      {
-        kind: "category",
-        name: "Functions",
-        categorystyle: "procedure_category",
-        custom: "PROCEDURE"
-      },
-
-
-      /*
-       * -----------------------
-       * TEXT / OUTPUT
-       * -----------------------
-       */
-
-      {
-        kind: "category",
-        name: "Text / Output",
-        categorystyle: "text_category",
-
-        contents: [
-
-          {
-            kind: "block",
-            type: "text"
-          },
-
-          {
-            kind: "block",
-            type: "text_join"
-          },
-
-          {
-            kind: "block",
-            type: "text_length"
-          },
-
-          {
-            kind: "block",
-            type: "text_isEmpty"
-          },
-
-          {
-            kind: "block",
-            type: "text_print"
-          }
-
-        ]
-      }
-
-    ]
-  };
+  const STORAGE_KEY =
+    "algorithmLabTemporaryWorkspace";
 
 
   /*
    * =======================================================
-   * WORKSPACE
+   * LANGUAGE
    * =======================================================
    */
 
-  const workspace = Blockly.inject(
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
 
-    "blocklyDiv",
+  let currentLanguage =
+    params.get("lang") || "en";
 
-    {
 
-      toolbox: toolbox,
+  if (
+    currentLanguage !== "es" &&
+    currentLanguage !== "en"
+  ) {
 
-      trashcan: true,
+    currentLanguage = "en";
 
-      scrollbars: true,
+  }
 
-      move: {
 
-        scrollbars: true,
-        drag: true,
-        wheel: true
+  const UI = {
 
-      },
+    en: {
 
-      zoom: {
+      subtitle:
+        "Build, test and explore algorithms using blocks.",
 
-        controls: true,
-        wheel: true,
-        startScale: 1,
-        maxScale: 2,
-        minScale: 0.5,
-        scaleSpeed: 1.2
+      console:
+        "CONSOLE",
 
-      }
+      run:
+        "▶ Run",
+
+      clear:
+        "Clear console",
+
+      reset:
+        "↻ Reset workspace",
+
+      ready:
+        "Ready.",
+
+      instruction:
+        "Build an algorithm and press Run.",
+
+      running:
+        "Running...",
+
+      completed:
+        "Execution completed",
+
+      stopped:
+        "Execution stopped",
+
+      operations:
+        "operations",
+
+      maximum:
+        "Maximum operations: 10,000",
+
+      noOutput:
+        "Program finished with no output.",
+
+      consoleCleared:
+        "Console cleared.",
+
+      workspaceReset:
+        "Workspace reset.",
+
+      error:
+        "ERROR",
+
+      limitError:
+        "Maximum operation limit reached. " +
+        "Check for a possible infinite loop " +
+        "or recursive function.",
+
+      stoppedAutomatically:
+        "Execution stopped automatically.",
+
+      reviewLoop:
+        "Review your loop condition or recursive function.",
+
+      loading:
+        "Loading Algorithm Lab..."
+
+    },
+
+
+    es: {
+
+      subtitle:
+        "Construye, prueba y explora algoritmos utilizando bloques.",
+
+      console:
+        "CONSOLA",
+
+      run:
+        "▶ Ejecutar",
+
+      clear:
+        "Limpiar consola",
+
+      reset:
+        "↻ Reiniciar espacio",
+
+      ready:
+        "Listo.",
+
+      instruction:
+        "Construye un algoritmo y presiona Ejecutar.",
+
+      running:
+        "Ejecutando...",
+
+      completed:
+        "Ejecución completada",
+
+      stopped:
+        "Ejecución detenida",
+
+      operations:
+        "operaciones",
+
+      maximum:
+        "Máximo de operaciones: 10,000",
+
+      noOutput:
+        "El programa terminó sin generar salida.",
+
+      consoleCleared:
+        "Consola limpiada.",
+
+      workspaceReset:
+        "Espacio de trabajo reiniciado.",
+
+      error:
+        "ERROR",
+
+      limitError:
+        "Se alcanzó el límite máximo de operaciones. " +
+        "Revisa si existe un ciclo infinito " +
+        "o una función recursiva.",
+
+      stoppedAutomatically:
+        "La ejecución se detuvo automáticamente.",
+
+      reviewLoop:
+        "Revisa la condición del ciclo o la función recursiva.",
+
+      loading:
+        "Cargando Algorithm Lab..."
 
     }
 
+  };
+
+
+  const T =
+    UI[currentLanguage];
+
+
+  /*
+   * =======================================================
+   * UPDATE STATIC INTERFACE
+   * =======================================================
+   */
+
+  document.documentElement.lang =
+    currentLanguage;
+
+  document.getElementById(
+    "subtitle"
+  ).textContent =
+    T.subtitle;
+
+  document.getElementById(
+    "consoleTitle"
+  ).textContent =
+    T.console;
+
+  document.getElementById(
+    "runButton"
+  ).textContent =
+    T.run;
+
+  document.getElementById(
+    "clearButton"
+  ).textContent =
+    T.clear;
+
+  document.getElementById(
+    "resetButton"
+  ).textContent =
+    T.reset;
+
+  document.getElementById(
+    "operationLimit"
+  ).textContent =
+    T.maximum;
+
+  document.getElementById(
+    "status"
+  ).textContent =
+    T.instruction;
+
+  document.getElementById(
+    "loadingMessage"
+  ).textContent =
+    T.loading;
+
+
+  document.getElementById(
+    "langES"
+  ).classList.toggle(
+    "active",
+    currentLanguage === "es"
   );
+
+  document.getElementById(
+    "langEN"
+  ).classList.toggle(
+    "active",
+    currentLanguage === "en"
+  );
+
+
+  /*
+   * =======================================================
+   * LOAD BLOCKLY LANGUAGE
+   * =======================================================
+   */
+
+  const languageScript =
+    document.createElement("script");
+
+  languageScript.src =
+    currentLanguage === "es"
+      ? "https://unpkg.com/blockly/msg/es.js"
+      : "https://unpkg.com/blockly/msg/en.js";
+
+  languageScript.onload =
+    initializeLab;
+
+  languageScript.onerror =
+    function() {
+
+      document.getElementById(
+        "loadingMessage"
+      ).textContent =
+        "Error loading Blockly language.";
+
+    };
+
+  document.head.appendChild(
+    languageScript
+  );
+
+
+  /*
+   * =======================================================
+   * MAIN APPLICATION
+   * =======================================================
+   */
+
+  let workspace = null;
+
+
+  function initializeLab() {
+
+    /*
+     * -----------------------
+     * TOOLBOX
+     * -----------------------
+     */
+
+    const categoryNames = {
+
+      en: {
+        logic: "Logic",
+        loops: "Loops",
+        math: "Math",
+        variables: "Variables",
+        functions: "Functions",
+        text: "Text / Output"
+      },
+
+      es: {
+        logic: "Lógica",
+        loops: "Ciclos",
+        math: "Matemáticas",
+        variables: "Variables",
+        functions: "Funciones",
+        text: "Texto / Salida"
+      }
+
+    };
+
+
+    const C =
+      categoryNames[currentLanguage];
+
+
+    const toolbox = {
+
+      kind: "categoryToolbox",
+
+      contents: [
+
+        /*
+         * LOGIC
+         */
+
+        {
+          kind: "category",
+          name: C.logic,
+          categorystyle:
+            "logic_category",
+
+          contents: [
+
+            {
+              kind: "block",
+              type: "controls_if"
+            },
+
+            {
+              kind: "block",
+              type: "logic_compare"
+            },
+
+            {
+              kind: "block",
+              type: "logic_operation"
+            },
+
+            {
+              kind: "block",
+              type: "logic_negate"
+            },
+
+            {
+              kind: "block",
+              type: "logic_boolean"
+            },
+
+            {
+              kind: "block",
+              type: "logic_null"
+            },
+
+            {
+              kind: "block",
+              type: "logic_ternary"
+            }
+
+          ]
+        },
+
+
+        /*
+         * LOOPS
+         */
+
+        {
+          kind: "category",
+          name: C.loops,
+          categorystyle:
+            "loop_category",
+
+          contents: [
+
+            {
+              kind: "block",
+              type: "controls_repeat_ext"
+            },
+
+            {
+              kind: "block",
+              type: "controls_whileUntil"
+            },
+
+            {
+              kind: "block",
+              type: "controls_for"
+            },
+
+            {
+              kind: "block",
+              type: "controls_forEach"
+            },
+
+            {
+              kind: "block",
+              type: "controls_flow_statements"
+            }
+
+          ]
+        },
+
+
+        /*
+         * MATH
+         */
+
+        {
+          kind: "category",
+          name: C.math,
+          categorystyle:
+            "math_category",
+
+          contents: [
+
+            {
+              kind: "block",
+              type: "math_number"
+            },
+
+            {
+              kind: "block",
+              type: "math_arithmetic"
+            },
+
+            {
+              kind: "block",
+              type: "math_single"
+            },
+
+            {
+              kind: "block",
+              type: "math_trig"
+            },
+
+            {
+              kind: "block",
+              type: "math_constant"
+            },
+
+            {
+              kind: "block",
+              type: "math_number_property"
+            },
+
+            {
+              kind: "block",
+              type: "math_round"
+            },
+
+            {
+              kind: "block",
+              type: "math_modulo"
+            },
+
+            {
+              kind: "block",
+              type: "math_constrain"
+            },
+
+            {
+              kind: "block",
+              type: "math_random_int"
+            },
+
+            {
+              kind: "block",
+              type: "math_random_float"
+            }
+
+          ]
+        },
+
+
+        /*
+         * VARIABLES
+         */
+
+        {
+          kind: "category",
+          name: C.variables,
+          categorystyle:
+            "variable_category",
+          custom: "VARIABLE"
+        },
+
+
+        /*
+         * FUNCTIONS
+         */
+
+        {
+          kind: "category",
+          name: C.functions,
+          categorystyle:
+            "procedure_category",
+          custom: "PROCEDURE"
+        },
+
+
+        /*
+         * TEXT
+         */
+
+        {
+          kind: "category",
+          name: C.text,
+          categorystyle:
+            "text_category",
+
+          contents: [
+
+            {
+              kind: "block",
+              type: "text"
+            },
+
+            {
+              kind: "block",
+              type: "text_join"
+            },
+
+            {
+              kind: "block",
+              type: "text_length"
+            },
+
+            {
+              kind: "block",
+              type: "text_isEmpty"
+            },
+
+            {
+              kind: "block",
+              type: "text_print"
+            }
+
+          ]
+        }
+
+      ]
+    };
+
+
+    /*
+     * -----------------------
+     * CREATE WORKSPACE
+     * -----------------------
+     */
+
+    workspace =
+      Blockly.inject(
+
+        "blocklyDiv",
+
+        {
+
+          toolbox: toolbox,
+
+          trashcan: true,
+
+          scrollbars: true,
+
+          move: {
+
+            scrollbars: true,
+            drag: true,
+            wheel: true
+
+          },
+
+          zoom: {
+
+            controls: true,
+            wheel: true,
+            startScale: 1,
+            maxScale: 2,
+            minScale: 0.5,
+            scaleSpeed: 1.2
+
+          }
+
+        }
+
+      );
+
+
+    /*
+     * -----------------------
+     * CUSTOM PRINT
+     * -----------------------
+     */
+
+    javascript
+      .javascriptGenerator
+      .forBlock["text_print"] =
+
+      function(
+        block,
+        generator
+      ) {
+
+        const value =
+          generator.valueToCode(
+            block,
+            "TEXT",
+            javascript.Order.NONE
+          ) || "''";
+
+        return (
+          "printToLab(" +
+          value +
+          ");\n"
+        );
+
+      };
+
+
+    /*
+     * -----------------------
+     * OPERATION PROTECTION
+     * -----------------------
+     */
+
+    javascript
+      .javascriptGenerator
+      .STATEMENT_PREFIX =
+        "checkOperation();\n";
+
+
+    /*
+     * -----------------------
+     * RESTORE WORKSPACE
+     * -----------------------
+     */
+
+    restoreTemporaryWorkspace();
+
+
+    /*
+     * -----------------------
+     * SHOW LAB
+     * -----------------------
+     */
+
+    document.getElementById(
+      "loadingMessage"
+    ).style.display =
+      "none";
+
+    document.getElementById(
+      "labInterface"
+    ).style.display =
+      "block";
+
+
+    Blockly.svgResize(
+      workspace
+    );
+
+
+    clearConsole();
+
+    addConsoleLine(
+      T.ready,
+      "console-placeholder"
+    );
+
+  }
 
 
   /*
@@ -544,10 +996,9 @@
    */
 
   const consoleOutput =
-    document.getElementById("consoleOutput");
-
-  const status =
-    document.getElementById("status");
+    document.getElementById(
+      "consoleOutput"
+    );
 
 
   function clearConsole() {
@@ -565,15 +1016,19 @@
     const line =
       document.createElement("div");
 
-    line.textContent = text;
+    line.textContent =
+      text;
 
     if (className) {
 
-      line.className = className;
+      line.className =
+        className;
 
     }
 
-    consoleOutput.appendChild(line);
+    consoleOutput.appendChild(
+      line
+    );
 
   }
 
@@ -589,41 +1044,6 @@
 
   /*
    * =======================================================
-   * CUSTOM PRINT
-   * =======================================================
-   */
-
-  javascript.javascriptGenerator.forBlock["text_print"] =
-    function(block, generator) {
-
-      const value =
-        generator.valueToCode(
-          block,
-          "TEXT",
-          javascript.Order.NONE
-        ) || "''";
-
-      return (
-        "printToLab(" +
-        value +
-        ");\n"
-      );
-
-    };
-
-
-  /*
-   * =======================================================
-   * OPERATION PROTECTION
-   * =======================================================
-   */
-
-  javascript.javascriptGenerator.STATEMENT_PREFIX =
-    "checkOperation();\n";
-
-
-  /*
-   * =======================================================
    * EXECUTION
    * =======================================================
    */
@@ -632,8 +1052,10 @@
 
     clearConsole();
 
-    status.textContent =
-      "Running...";
+    document.getElementById(
+      "status"
+    ).textContent =
+      T.running;
 
 
     let operations = 0;
@@ -650,9 +1072,7 @@
       ) {
 
         throw new Error(
-          "Maximum operation limit reached. " +
-          "Check for a possible infinite loop " +
-          "or recursive function."
+          T.limitError
         );
 
       }
@@ -662,19 +1082,13 @@
 
     try {
 
-      /*
-       * Generate JavaScript
-       */
-
       const code =
-        javascript.javascriptGenerator.workspaceToCode(
-          workspace
-        );
+        javascript
+          .javascriptGenerator
+          .workspaceToCode(
+            workspace
+          );
 
-
-      /*
-       * Execute generated program
-       */
 
       const execute =
         new Function(
@@ -694,26 +1108,30 @@
       );
 
 
-      /*
-       * Program with no print
-       */
-
       if (
-        consoleOutput.textContent.trim() === ""
+        consoleOutput
+          .textContent
+          .trim() === ""
       ) {
 
         addConsoleLine(
-          "Program finished with no output.",
+          T.noOutput,
           "console-placeholder"
         );
 
       }
 
 
-      status.textContent =
-        "Execution completed · " +
+      document.getElementById(
+        "status"
+      ).textContent =
+
+        T.completed +
+        " · " +
         operations +
-        " operations.";
+        " " +
+        T.operations +
+        ".";
 
     }
 
@@ -724,7 +1142,7 @@
 
 
       addConsoleLine(
-        "ERROR",
+        T.error,
         "console-error"
       );
 
@@ -736,33 +1154,37 @@
 
 
       if (
-        error.message.includes(
-          "Maximum operation limit"
-        )
+        error.message ===
+        T.limitError
       ) {
 
         addConsoleLine(
-          "",
-          "console-error"
+          ""
         );
 
         addConsoleLine(
-          "Execution stopped automatically.",
+          T.stoppedAutomatically,
           "console-info"
         );
 
         addConsoleLine(
-          "Review your loop condition or recursive function.",
+          T.reviewLoop,
           "console-info"
         );
 
       }
 
 
-      status.textContent =
-        "Execution stopped · " +
+      document.getElementById(
+        "status"
+      ).textContent =
+
+        T.stopped +
+        " · " +
         operations +
-        " operations.";
+        " " +
+        T.operations +
+        ".";
 
     }
 
@@ -771,61 +1193,236 @@
 
   /*
    * =======================================================
+   * TEMPORARY WORKSPACE STORAGE
+   * =======================================================
+   */
+
+  function saveTemporaryWorkspace() {
+
+    if (!workspace) {
+      return;
+    }
+
+
+    try {
+
+      const state =
+        Blockly.serialization
+          .workspaces
+          .save(
+            workspace
+          );
+
+
+      sessionStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(state)
+      );
+
+    }
+
+    catch (error) {
+
+      console.error(
+        "Could not save workspace.",
+        error
+      );
+
+    }
+
+  }
+
+
+  function restoreTemporaryWorkspace() {
+
+    const saved =
+      sessionStorage.getItem(
+        STORAGE_KEY
+      );
+
+
+    if (!saved) {
+      return;
+    }
+
+
+    try {
+
+      const state =
+        JSON.parse(saved);
+
+
+      Blockly.serialization
+        .workspaces
+        .load(
+          state,
+          workspace
+        );
+
+
+      sessionStorage.removeItem(
+        STORAGE_KEY
+      );
+
+    }
+
+    catch (error) {
+
+      console.error(
+        "Could not restore workspace.",
+        error
+      );
+
+
+      sessionStorage.removeItem(
+        STORAGE_KEY
+      );
+
+    }
+
+  }
+
+
+  /*
+   * =======================================================
+   * LANGUAGE SWITCHING
+   * =======================================================
+   */
+
+  function switchLanguage(
+    language
+  ) {
+
+    if (
+      language ===
+      currentLanguage
+    ) {
+
+      return;
+
+    }
+
+
+    saveTemporaryWorkspace();
+
+
+    const url =
+      new URL(
+        window.location.href
+      );
+
+
+    url.searchParams.set(
+      "lang",
+      language
+    );
+
+
+    window.location.href =
+      url.toString();
+
+  }
+
+
+  document.getElementById(
+    "langES"
+  ).addEventListener(
+
+    "click",
+
+    function() {
+
+      switchLanguage("es");
+
+    }
+
+  );
+
+
+  document.getElementById(
+    "langEN"
+  ).addEventListener(
+
+    "click",
+
+    function() {
+
+      switchLanguage("en");
+
+    }
+
+  );
+
+
+  /*
+   * =======================================================
    * BUTTONS
    * =======================================================
    */
 
-  document
-    .getElementById("runButton")
-    .addEventListener(
-      "click",
-      runProgram
-    );
+  document.getElementById(
+    "runButton"
+  ).addEventListener(
+
+    "click",
+
+    runProgram
+
+  );
 
 
-  document
-    .getElementById("clearButton")
-    .addEventListener(
+  document.getElementById(
+    "clearButton"
+  ).addEventListener(
 
-      "click",
+    "click",
 
-      function() {
+    function() {
 
-        clearConsole();
+      clearConsole();
 
-        addConsoleLine(
-          "Console cleared.",
-          "console-placeholder"
-        );
+      addConsoleLine(
+        T.consoleCleared,
+        "console-placeholder"
+      );
 
+    }
+
+  );
+
+
+  document.getElementById(
+    "resetButton"
+  ).addEventListener(
+
+    "click",
+
+    function() {
+
+      if (!workspace) {
+        return;
       }
 
-    );
+
+      workspace.clear();
+
+      clearConsole();
 
 
-  document
-    .getElementById("resetButton")
-    .addEventListener(
+      addConsoleLine(
+        T.ready,
+        "console-placeholder"
+      );
 
-      "click",
 
-      function() {
+      document.getElementById(
+        "status"
+      ).textContent =
+        T.workspaceReset;
 
-        workspace.clear();
+    }
 
-        clearConsole();
-
-        addConsoleLine(
-          "Ready.",
-          "console-placeholder"
-        );
-
-        status.textContent =
-          "Workspace reset.";
-
-      }
-
-    );
+  );
 
 </script>
 
