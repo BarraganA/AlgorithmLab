@@ -50,7 +50,7 @@
 
     .workspace-layout {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 280px;
+      grid-template-columns: minmax(0, 1fr) 300px;
       gap: 16px;
     }
 
@@ -98,6 +98,14 @@
 
     .console-placeholder {
       color: #9aa0a6;
+    }
+
+    .console-error {
+      color: #f28b82;
+    }
+
+    .console-info {
+      color: #8ab4f8;
     }
 
     .controls {
@@ -171,6 +179,7 @@
     </div>
 
     <div class="console-panel">
+
       <div class="console-header">
         CONSOLE
       </div>
@@ -178,6 +187,7 @@
       <div id="consoleOutput">
         <span class="console-placeholder">Ready.</span>
       </div>
+
     </div>
 
   </div>
@@ -197,12 +207,22 @@
 <script>
 
   /*
-   * -------------------------------------------------------
+   * =======================================================
+   * CONFIGURATION
+   * =======================================================
+   */
+
+  const MAX_OPERATIONS = 10000;
+
+
+  /*
+   * =======================================================
    * TOOLBOX
-   * -------------------------------------------------------
+   * =======================================================
    */
 
   const toolbox = {
+
     kind: "categoryToolbox",
 
     contents: [
@@ -213,26 +233,32 @@
         categorystyle: "logic_category",
 
         contents: [
+
           {
             kind: "block",
             type: "controls_if"
           },
+
           {
             kind: "block",
             type: "logic_compare"
           },
+
           {
             kind: "block",
             type: "logic_operation"
           },
+
           {
             kind: "block",
             type: "logic_negate"
           },
+
           {
             kind: "block",
             type: "logic_boolean"
           }
+
         ]
       },
 
@@ -242,18 +268,22 @@
         categorystyle: "loop_category",
 
         contents: [
+
           {
             kind: "block",
             type: "controls_repeat_ext"
           },
+
           {
             kind: "block",
             type: "controls_whileUntil"
           },
+
           {
             kind: "block",
             type: "controls_for"
           }
+
         ]
       },
 
@@ -263,22 +293,27 @@
         categorystyle: "math_category",
 
         contents: [
+
           {
             kind: "block",
             type: "math_number"
           },
+
           {
             kind: "block",
             type: "math_arithmetic"
           },
+
           {
             kind: "block",
             type: "math_modulo"
           },
+
           {
             kind: "block",
             type: "math_round"
           }
+
         ]
       },
 
@@ -295,14 +330,17 @@
         categorystyle: "text_category",
 
         contents: [
+
           {
             kind: "block",
             type: "text"
           },
+
           {
             kind: "block",
             type: "text_print"
           }
+
         ]
       }
 
@@ -311,14 +349,17 @@
 
 
   /*
-   * -------------------------------------------------------
+   * =======================================================
    * WORKSPACE
-   * -------------------------------------------------------
+   * =======================================================
    */
 
   const workspace = Blockly.inject(
+
     "blocklyDiv",
+
     {
+
       toolbox: toolbox,
 
       trashcan: true,
@@ -339,14 +380,16 @@
         minScale: 0.5,
         scaleSpeed: 1.2
       }
+
     }
+
   );
 
 
   /*
-   * -------------------------------------------------------
-   * CONSOLE
-   * -------------------------------------------------------
+   * =======================================================
+   * INTERFACE
+   * =======================================================
    */
 
   const consoleOutput =
@@ -363,28 +406,35 @@
   }
 
 
-  function writeConsole(value) {
+  function addConsoleLine(text, className = "") {
 
-    const line = document.createElement("div");
+    const line =
+      document.createElement("div");
 
-    line.textContent = "> " + String(value);
+    line.textContent = text;
+
+    if (className) {
+      line.className = className;
+    }
 
     consoleOutput.appendChild(line);
 
   }
 
 
+  function writeConsole(value) {
+
+    addConsoleLine(
+      "> " + String(value)
+    );
+
+  }
+
+
   /*
-   * -------------------------------------------------------
-   * BLOCKLY PRINT
-   * -------------------------------------------------------
-   *
-   * Blockly's text_print block normally generates alert().
-   *
-   * We replace that behavior so "print" writes to our
-   * own console instead.
-   *
-   * -------------------------------------------------------
+   * =======================================================
+   * CUSTOM PRINT
+   * =======================================================
    */
 
   javascript.javascriptGenerator.forBlock["text_print"] =
@@ -397,62 +447,132 @@
           javascript.Order.NONE
         ) || "''";
 
-      return "printToLab(" + value + ");\n";
+      return (
+        "printToLab(" +
+        value +
+        ");\n"
+      );
 
     };
 
 
   /*
-   * -------------------------------------------------------
+   * =======================================================
+   * LOOP PROTECTION
+   * =======================================================
+   *
+   * Blockly supports statementPrefix.
+   *
+   * This inserts:
+   *
+   *    checkTimeout();
+   *
+   * before generated statements.
+   *
+   * Therefore a repeating program continually checks
+   * whether it has exceeded the allowed operation count.
+   *
+   * =======================================================
+   */
+
+  javascript.javascriptGenerator.STATEMENT_PREFIX =
+    "checkTimeout();\n";
+
+
+  /*
+   * =======================================================
    * EXECUTION
-   * -------------------------------------------------------
+   * =======================================================
    */
 
   function runProgram() {
 
     clearConsole();
 
-    status.textContent = "Running...";
+    status.textContent =
+      "Running...";
+
+
+    let operations = 0;
+
+
+    function checkTimeout() {
+
+      operations++;
+
+      if (operations > MAX_OPERATIONS) {
+
+        throw new Error(
+          "Maximum operation limit reached. " +
+          "Check for a possible infinite loop."
+        );
+
+      }
+
+    }
+
 
     try {
+
+      /*
+       * Generate JavaScript from Blockly.
+       */
 
       const code =
         javascript.javascriptGenerator.workspaceToCode(
           workspace
         );
 
+
       /*
-       * Temporary execution method.
+       * Create isolated execution function.
        *
-       * This is useful while developing the first prototype.
-       * In the next phase we will replace this with guarded
-       * execution so WHILE loops cannot freeze the page.
+       * The generated program only receives the functions
+       * that we explicitly provide.
        */
 
       const execute =
         new Function(
+
           "printToLab",
-          '"use strict";\n' + code
+          "checkTimeout",
+
+          '"use strict";\n' +
+          code
+
         );
 
-      execute(writeConsole);
 
-      if (consoleOutput.textContent.trim() === "") {
+      /*
+       * Execute program.
+       */
 
-        const message =
-          document.createElement("div");
+      execute(
+        writeConsole,
+        checkTimeout
+      );
 
-        message.className = "console-placeholder";
 
-        message.textContent =
-          "Program finished with no output.";
+      /*
+       * If the algorithm produced no output:
+       */
 
-        consoleOutput.appendChild(message);
+      if (
+        consoleOutput.textContent.trim() === ""
+      ) {
+
+        addConsoleLine(
+          "Program finished with no output.",
+          "console-placeholder"
+        );
 
       }
 
+
       status.textContent =
-        "Execution completed.";
+        "Execution completed. " +
+        operations +
+        " operations.";
 
     }
 
@@ -460,16 +580,45 @@
 
       clearConsole();
 
-      const message =
-        document.createElement("div");
+      addConsoleLine(
+        "ERROR",
+        "console-error"
+      );
 
-      message.textContent =
-        "ERROR: " + error.message;
+      addConsoleLine(
+        error.message,
+        "console-error"
+      );
 
-      consoleOutput.appendChild(message);
+
+      if (
+        error.message.includes(
+          "Maximum operation limit"
+        )
+      ) {
+
+        addConsoleLine(
+          "",
+          "console-error"
+        );
+
+        addConsoleLine(
+          "Execution stopped automatically.",
+          "console-info"
+        );
+
+        addConsoleLine(
+          "Review your loop condition.",
+          "console-info"
+        );
+
+      }
+
 
       status.textContent =
-        "Execution failed.";
+        "Execution stopped after " +
+        operations +
+        " operations.";
 
     }
 
@@ -477,9 +626,9 @@
 
 
   /*
-   * -------------------------------------------------------
+   * =======================================================
    * BUTTONS
-   * -------------------------------------------------------
+   * =======================================================
    */
 
   document
@@ -493,51 +642,45 @@
   document
     .getElementById("clearButton")
     .addEventListener(
+
       "click",
+
       function() {
 
         clearConsole();
 
-        const message =
-          document.createElement("span");
-
-        message.className =
-          "console-placeholder";
-
-        message.textContent =
-          "Console cleared.";
-
-        consoleOutput.appendChild(message);
+        addConsoleLine(
+          "Console cleared.",
+          "console-placeholder"
+        );
 
       }
+
     );
 
 
   document
     .getElementById("resetButton")
     .addEventListener(
+
       "click",
+
       function() {
 
         workspace.clear();
 
         clearConsole();
 
-        const message =
-          document.createElement("span");
-
-        message.className =
-          "console-placeholder";
-
-        message.textContent =
-          "Ready.";
-
-        consoleOutput.appendChild(message);
+        addConsoleLine(
+          "Ready.",
+          "console-placeholder"
+        );
 
         status.textContent =
           "Workspace reset.";
 
       }
+
     );
 
 </script>
