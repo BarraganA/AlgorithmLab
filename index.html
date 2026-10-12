@@ -14,7 +14,7 @@ h1{font-size:23px;margin:0 0 5px}header p{margin:4px 0;color:#5f6368}.campus{fon
 main{padding:16px}.layout{display:grid;grid-template-columns:minmax(0,1fr)310px;gap:16px}#blocklyDiv{height:620px;background:white;border:1px solid #dadce0;border-radius:10px;overflow:hidden}
 .console{background:#202124;color:white;border-radius:10px;display:flex;flex-direction:column;min-height:620px;min-width:0;overflow:hidden}.console strong{padding:14px 16px;border-bottom:1px solid #3c4043;font-size:13px}
 #output{padding:16px;flex:1;white-space:pre-wrap;overflow-wrap:anywhere;overflow-y:auto;font:14px/1.6 Consolas,monospace}
-.controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.controls button,.modal button{border:1px solid #dadce0;background:#fff;border-radius:7px;padding:10px 15px;cursor:pointer;font-size:14px}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:0;margin-bottom:14px}.controls button,.modal button{border:1px solid #dadce0;background:#fff;border-radius:7px;padding:10px 15px;cursor:pointer;font-size:14px}
 #run{background:#1a73e8;color:white;border-color:#1a73e8}#evidence{background:#188038;color:white;border-color:#188038;margin-left:auto}button:disabled{opacity:.55;cursor:wait}
 .status{display:flex;justify-content:space-between;gap:10px;margin-top:12px;color:#5f6368;font-size:12px}
 .modal{position:fixed;inset:0;background:#0009;display:flex;align-items:center;justify-content:center;z-index:10000;padding:16px}.modal[hidden]{display:none}
@@ -24,8 +24,8 @@ main{padding:16px}.layout{display:grid;grid-template-columns:minmax(0,1fr)310px;
 </head>
 <body>
 <header><div><h1 id="title"></h1><p id="instruction"></p><p class="campus">PrepaTec Campus Hidalgo</p></div><div class="headright"><div class="langs"><button id="es">ES</button><button id="en">EN</button></div><small>v1.1</small></div></header>
-<main><div id="loading">Cargando...</div><div id="interface" hidden><div class="layout"><div id="blocklyDiv"></div><section class="console"><strong id="consoleTitle"></strong><div id="output"></div></section></div>
-<div class="controls"><button id="run"></button><button id="test"></button><button id="clear"></button><button id="reset"></button><button id="evidence"></button></div>
+<main><div id="loading">Cargando...</div><div id="interface" hidden><div class="controls"><button id="run"></button><button id="test"></button><button id="clear"></button><button id="reset"></button><button id="evidence"></button></div>
+<div class="layout"><div id="blocklyDiv"></div><section class="console"><strong id="consoleTitle"></strong><div id="output"></div></section></div>
 <div class="status"><span id="status"></span><span id="limit"></span></div></div></main>
 <div id="modal" class="modal" hidden><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle"><h2 id="dialogTitle"></h2><label id="question" for="answer"></label><input id="answer" autocomplete="off"><div id="inputError" class="error" aria-live="polite"></div><div class="actions"><button id="cancel"></button><button id="accept"></button></div></div></div>
 <script>
