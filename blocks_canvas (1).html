@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<!--
+  Pensamiento Lógico Computacional | PrepaTec Campus Hidalgo
+  Versión: 1.3 (Optimizado para Canvas LMS y Respondus LockDown Browser)
+  Código generado por: Armando Barragán y Javier de la Tejera
+-->
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pensamiento Lógico Computacional | PrepaTec Campus Hidalgo</title>
+<script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
+<script src="https://unpkg.com/blockly/blocks_compressed.js"></script>
+<script src="https://unpkg.com/blockly/javascript_compressed.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;font:14px Arial,sans-serif;background:#f5f6f8;color:#202124}
+header{padding:16px 22px;background:#fff;border-bottom:1px solid #dadce0;display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;align-items:center}
+h1{font-size:23px;margin:0 0 5px}header p{margin:4px 0;color:#5f6368}.campus{font-size:12px;font-weight:bold;color:#202124}
+.authors{font-size:11px;color:#5f6368;margin-top:2px}
+.headright{display:flex;align-items:center;gap:12px}.langs{background:#f1f3f4;padding:3px;border-radius:8px}.langs button{border:0;background:transparent;padding:7px 11px;cursor:pointer;border-radius:6px}.langs button.active{background:white;color:#1a73e8;font-weight:bold}
+main{padding:16px}.layout{display:grid;grid-template-columns:minmax(0,1fr)310px;gap:16px}#blocklyDiv{height:620px;background:white;border:1px solid #dadce0;border-radius:10px;overflow:hidden}
+.console{background:#202124;color:white;border-radius:10px;display:flex;flex-direction:column;min-height:620px;min-width:0;overflow:hidden}.console strong{padding:14px 16px;border-bottom:1px solid #3c4043;font-size:13px}
+#output{padding:16px;flex:1;white-space:pre-wrap;overflow-wrap:anywhere;overflow-y:auto;font:14px/1.6 Consolas,monospace}
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:0;margin-bottom:14px}.controls button,.modal button{border:1px solid #dadce0;background:#fff;border-radius:7px;padding:9px 13px;cursor:pointer;font-size:13px;font-weight:500}
+#run{background:#1a73e8;color:white;border-color:#1a73e8;font-weight:bold}#evidence{background:#188038;color:white;border-color:#188038;margin-left:auto;font-weight:bold}
+#copyCode,#loadCode{background:#f8f9fa;color:#3c4043}
+button:disabled{opacity:.55;cursor:wait}
+.status{display:flex;justify-content:space-between;gap:10px;margin-top:12px;color:#5f6368;font-size:12px;flex-wrap:wrap}
+.modal{position:fixed;inset:0;background:#0009;display:flex;align-items:center;justify-content:center;z-index:10000;padding:16px}.modal[hidden]{display:none}
+.dialog{background:white;border-radius:12px;width:min(100%,460px);padding:24px;box-shadow:0 12px 40px #0004;max-height:92vh;display:flex;flex-direction:column}.dialog.wide{width:min(100%,760px)}
+.dialog h2{margin:0 0 10px;font-size:19px}.dialog p.hint{margin:0 0 12px;color:#5f6368;font-size:13px;line-height:1.4}
+.dialog label{display:block;margin-bottom:10px}.dialog input,.dialog textarea{width:100%;font:15px Consolas,monospace;padding:10px;border:1px solid #aaa;border-radius:6px}
+.dialog textarea{min-height:110px;resize:vertical}
+.dialog .error{color:#b3261e;min-height:22px;margin-top:8px;font-size:13px}
+.dialog .notice{color:#188038;min-height:20px;margin-top:8px;font-size:13px;font-weight:bold}
+.dialog .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;flex-wrap:wrap}
+.dialog .primary{background:#1a73e8;color:white;border-color:#1a73e8}.dialog .success{background:#188038;color:white;border-color:#188038}.dialog .danger{background:#d93025;color:white;border-color:#d93025}
+.ev-preview{overflow:auto;border:1px solid #dadce0;border-radius:8px;background:#f8f9fa;padding:8px;max-height:48vh;text-align:center}
+.ev-preview img{max-width:100%;height:auto;border-radius:4px;box-shadow:0 2px 8px #0002}
+.backup-box{margin-top:12px;padding-top:10px;border-top:1px solid #eee}
+.backup-box label{font-size:12px;font-weight:bold;color:#5f6368;margin-bottom:4px}
+.backup-box input{font-size:12px;padding:7px;background:#f1f3f4;color:#3c4043}
+@media(max-width:850px){.layout{grid-template-columns:1fr}#blocklyDiv{height:520px}.console{min-height:230px}#evidence{margin-left:0}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1 id="title"></h1>
+    <p id="instruction"></p>
+    <p class="campus" id="campusLabel">PrepaTec Campus Hidalgo</p>
+    <p class="authors" id="authorsLabel"></p>
+  </div>
+  <div class="headright">
+    <div class="langs"><button id="es">ES</button><button id="en">EN</button></div>
+    <small>v1.3</small>
+  </div>
+</header>
+<main>
+  <div id="loading">Cargando...</div>
+  <div id="interface" hidden>
+    <div class="controls">
+      <button id="run"></button>
+      <button id="test"></button>
+      <button id="clear"></button>
+      <button id="reset"></button>
+      <button id="copyCode"></button>
+      <button id="loadCode"></button>
+      <button id="evidence"></button>
+    </div>
+    <div class="layout">
+      <div id="blocklyDiv"></div>
+      <section class="console"><strong id="consoleTitle"></strong><div id="output"></div></section>
+    </div>
+    <div class="status"><span id="status"></span><span id="limit"></span></div>
+  </div>
+</main>
+
+<!-- Modal Solicitar Entrada -->
+<div id="modal" class="modal" hidden>
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+    <h2 id="dialogTitle"></h2>
+    <label id="question" for="answer"></label>
+    <input id="answer" autocomplete="off">
+    <div id="inputError" class="error" aria-live="polite"></div>
+    <div class="actions">
+      <button id="cancel"></button>
+      <button id="accept" class="primary"></button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Confirmar Reinicio (Compatible con LockDown Browser sin usar confirm() nativo) -->
+<div id="resetModal" class="modal" hidden>
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="resetModalTitle">
+    <h2 id="resetModalTitle"></h2>
+    <p id="resetModalHint" class="hint"></p>
+    <div class="actions">
+      <button id="resetCancelBtn"></button>
+      <button id="resetConfirmBtn" class="danger"></button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Evidencia (Vista previa para copiar/pegar en Canvas + Descargar) -->
+<div id="evidenceModal" class="modal" hidden>
+  <div class="dialog wide" role="dialog" aria-modal="true" aria-labelledby="evModalTitle">
+    <h2 id="evModalTitle"></h2>
+    <p id="evModalHint" class="hint"></p>
+    <div class="ev-preview"><img id="evPreviewImg" alt="Evidencia"></div>
+    <div class="backup-box">
+      <label id="evBackupLabel" for="evBackupInput"></label>
+      <div style="display:flex;gap:6px">
+        <input id="evBackupInput" readonly onclick="this.select()">
+        <button id="evCopyBackupBtn"></button>
+      </div>
+    </div>
+    <div id="evFeedback" class="notice" aria-live="polite"></div>
+    <div class="actions">
+      <button id="evCopyImgBtn" class="primary"></button>
+      <button id="evDownloadBtn" class="success"></button>
+      <button id="evCloseBtn"></button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Cargar / Restaurar Bloques -->
+<div id="codeModal" class="modal" hidden>
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="codeModalTitle">
+    <h2 id="codeModalTitle"></h2>
+    <p id="codeModalHint" class="hint"></p>
+    <textarea id="codeInput" spellcheck="false"></textarea>
+    <div id="codeError" class="error"></div>
+    <div class="actions">
+      <button id="codeCancelBtn"></button>
+      <button id="codeLoadConfirmBtn" class="primary"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Código generado por Armando Barragán y Javier de la Tejera - PrepaTec Campus Hidalgo
+const VERSION="1.3",MAX=10000,MAX_OUTPUT=500;
+const AUTHORS="Armando Barragán y Javier de la Tejera";
+const query=new URLSearchParams(location.search);
+let lang=query.get("lang")==="en"?"en":"es";
+const qId=query.get("id")||query.get("q")||"default";
+const WK="plc-v13-workspace-"+qId,EK="plc-v13-execution-"+qId;
+
+const words={
+es:{
+  title:"Pensamiento Lógico Computacional",
+  instruction:"Construye tu solución y genera la evidencia",
+  authors:"Código generado por Armando Barragán y Javier de la Tejera",
+  console:"CONSOLA",
+  run:"▶ Ejecutar",
+  test:"Probar entrada",
+  clear:"Limpiar consola",
+  reset:"↻ Reiniciar espacio",
+  copyCode:"📋 Copiar bloques",
+  loadCode:"📂 Restaurar bloques",
+  evidence:"↓ Generar evidencia",
+  ready:"Listo.",
+  running:"Ejecutando...",
+  complete:"Ejecución completada",
+  stopped:"Ejecución detenida",
+  operations:"operaciones",
+  limit:"Máximo de operaciones: 10,000",
+  noOutput:"El programa terminó sin generar salida.",
+  notRun:"La solución todavía no ha sido ejecutada.",
+  error:"ERROR",
+  maxError:"Se alcanzó el límite de operaciones.",
+  outputError:"Se alcanzó el límite de líneas de salida.",
+  numberError:"Introduce un número válido.",
+  cancelError:"Entrada cancelada.",
+  promptText:"Solicitar texto",
+  promptNumber:"Solicitar número",
+  input:"ENTRADAS",
+  output:"SALIDA",
+  algorithm:"ALGORITMO",
+  structures:"ESTRUCTURAS UTILIZADAS",
+  evidenceTitle:"Evidencia de solución",
+  generated:"Generado",
+  variables:"Variables",
+  conditionals:"Condicionales",
+  loops:"Ciclos",
+  functions:"Funciones",
+  yes:"Sí",
+  no:"No",
+  accept:"Aceptar",
+  cancel:"Cancelar",
+  testQuestion:"Escribe un valor para probar el cuadro de entrada:",
+  testSuccess:"Entrada de prueba",
+  empty:"El espacio de trabajo está vacío.",
+  generating:"Generando evidencia...",
+  generatedOK:"Evidencia lista. Puedes descargarla o copiarla al examen.",
+  generateError:"No fue posible generar la evidencia.",
+  modified:"El algoritmo cambió desde la última ejecución. Ejecútalo de nuevo.",
+  resetDone:"Espacio reiniciado.",
+  resetTitle:"Reiniciar espacio de trabajo",
+  resetConfirm:"¿Seguro que deseas borrar todos los bloques actuales?",
+  resetConfirmBtn:"Sí, borrar bloques",
+  cleared:"Consola limpiada.",
+  invalid:"Error al ejecutar.",
+  askText:"solicitar texto",
+  askNumber:"solicitar número",
+  evModalTitle:"Evidencia lista para entregar",
+  evModalHint:"Si usas LockDown Browser o se bloquea la descarga, haz clic en «Copiar imagen» (o clic derecho sobre la imagen -> Copiar imagen) y pégala con Ctrl+V / Cmd+V directamente en tu respuesta de Canvas.",
+  evBackupLabel:"Código de respaldo de tus bloques (cópialo y pégalo en tu examen como respaldo):",
+  evCopyBackupBtn:"Copiar código",
+  evCopyImgBtn:"📋 Copiar imagen al portapapeles",
+  evImgCopied:"¡Imagen copiada! Ya puedes pegarla con Ctrl+V (o Cmd+V en Mac) en tu respuesta de Canvas.",
+  evImgCopyError:"No se pudo copiar automáticamente. Haz clic derecho sobre la imagen de arriba y selecciona «Copiar imagen».",
+  evDownloadBtn:"↓ Descargar PNG",
+  evCloseBtn:"Cerrar",
+  codeCopied:"¡Código de bloques copiado al portapapeles!",
+  codeModalTitle:"Restaurar bloques desde código",
+  codeModalHint:"Pega aquí el código de respaldo de tus bloques para recuperar tu programa en el área de trabajo:",
+  codeLoadConfirmBtn:"Cargar bloques",
+  codeLoadedOK:"Bloques restaurados correctamente.",
+  codeLoadError:"El código pegado no es válido."
+},
+en:{
+  title:"Computational Thinking",
+  instruction:"Build your solution and generate the evidence",
+  authors:"Code generated by Armando Barragán and Javier de la Tejera",
+  console:"CONSOLE",
+  run:"▶ Run",
+  test:"Test input",
+  clear:"Clear console",
+  reset:"↻ Reset workspace",
+  copyCode:"📋 Copy blocks",
+  loadCode:"📂 Restore blocks",
+  evidence:"↓ Generate Evidence",
+  ready:"Ready.",
+  running:"Running...",
+  complete:"Execution completed",
+  stopped:"Execution stopped",
+  operations:"operations",
+  limit:"Maximum operations: 10,000",
+  noOutput:"Program finished with no output.",
+  notRun:"The solution has not been executed yet.",
+  error:"ERROR",
+  maxError:"Maximum operation limit reached.",
+  outputError:"Output line limit reached.",
+  numberError:"Enter a valid number.",
+  cancelError:"Input cancelled.",
+  promptText:"Ask for text",
+  promptNumber:"Ask for number",
+  input:"INPUTS",
+  output:"OUTPUT",
+  algorithm:"ALGORITHM",
+  structures:"STRUCTURES USED",
+  evidenceTitle:"Solution Evidence",
+  generated:"Generated",
+  variables:"Variables",
+  conditionals:"Conditionals",
+  loops:"Loops",
+  functions:"Functions",
+  yes:"Yes",
+  no:"No",
+  accept:"OK",
+  cancel:"Cancel",
+  testQuestion:"Enter a value to test the input dialog:",
+  testSuccess:"Test input",
+  empty:"The workspace is empty.",
+  generating:"Generating evidence...",
+  generatedOK:"Evidence ready. You can download or copy it to the exam.",
+  generateError:"Could not generate evidence.",
+  modified:"The algorithm has changed since the last execution. Run it again.",
+  resetDone:"Workspace reset.",
+  resetTitle:"Reset Workspace",
+  resetConfirm:"Are you sure you want to clear all current blocks?",
+  resetConfirmBtn:"Yes, clear blocks",
+  cleared:"Console cleared.",
+  invalid:"Execution error.",
+  askText:"ask for text",
+  askNumber:"ask for number",
+  evModalTitle:"Evidence Ready to Submit",
+  evModalHint:"If using LockDown Browser or downloads are blocked, click 'Copy image' (or right-click the image -> Copy image) and paste it with Ctrl+V / Cmd+V directly into your Canvas answer.",
+  evBackupLabel:"Backup block code (copy and paste this into your exam as backup):",
+  evCopyBackupBtn:"Copy code",
+  evCopyImgBtn:"📋 Copy image to clipboard",
+  evImgCopied:"Image copied! You can now paste it with Ctrl+V (or Cmd+V on Mac) in Canvas.",
+  evImgCopyError:"Could not copy automatically. Right-click the image above and select 'Copy image'.",
+  evDownloadBtn:"↓ Download PNG",
+  evCloseBtn:"Close",
+  codeCopied:"Block code copied to clipboard!",
+  codeModalTitle:"Restore blocks from code",
+  codeModalHint:"Paste your backup block code here to restore your program into the workspace:",
+  codeLoadConfirmBtn:"Load blocks",
+  codeLoadedOK:"Blocks restored successfully.",
+  codeLoadError:"The pasted code is not valid."
+}};
+
+const T=words[lang],$=id=>document.getElementById(id);
+let workspace,running=false,pending=null,dirty=false,lastEvidenceBlob=null,lastEvidenceUrl=null;
+let execution={executed:false,output:[],inputs:[],operations:0,success:false};
+
+function safeGetStorage(key){try{return localStorage.getItem(key)||sessionStorage.getItem(key);}catch(e){return null;}}
+function safeSetStorage(key,val){try{localStorage.setItem(key,val);}catch(e){}try{sessionStorage.setItem(key,val);}catch(e){}}
+function safeRemoveStorage(key){try{localStorage.removeItem(key);}catch(e){}try{sessionStorage.removeItem(key);}catch(e){}}
+
+function updateUI(){
+  document.documentElement.lang=lang;
+  $("title").textContent=T.title;
+  $("instruction").textContent=T.instruction;
+  $("authorsLabel").textContent=T.authors;
+  if(qId!=="default")$("campusLabel").textContent="PrepaTec Campus Hidalgo · Ejercicio "+qId;
+  $("consoleTitle").textContent=T.console;
+  for(const k of ["run","test","clear","reset","copyCode","loadCode","evidence"])$(k).textContent=T[k];$("limit").textContent=T.limit;
+  $("status").textContent=T.ready;
+  $("accept").textContent=T.accept;
+  $("cancel").textContent=T.cancel;
+  $("resetModalTitle").textContent=T.resetTitle;
+  $("resetModalHint").textContent=T.resetConfirm;
+  $("resetCancelBtn").textContent=T.cancel;
+  $("resetConfirmBtn").textContent=T.resetConfirmBtn;
+  $("evModalTitle").textContent=T.evModalTitle;
+  $("evModalHint").textContent=T.evModalHint;
+  $("evBackupLabel").textContent=T.evBackupLabel;
+  $("evCopyBackupBtn").textContent=T.evCopyBackupBtn;
+  $("evCopyImgBtn").textContent=T.evCopyImgBtn;
+  $("evDownloadBtn").textContent=T.evDownloadBtn;
+  $("evCloseBtn").textContent=T.evCloseBtn;
+  $("codeModalTitle").textContent=T.codeModalTitle;
+  $("codeModalHint").textContent=T.codeModalHint;
+  $("codeCancelBtn").textContent=T.cancel;
+  $("codeLoadConfirmBtn").textContent=T.codeLoadConfirmBtn;
+  $("es").classList.toggle("active",lang==="es");
+  $("en").classList.toggle("active",lang==="en");
+}
+updateUI();
+
+function serializeWorkspace(){
+  if(!workspace)return "";
+  return JSON.stringify(Blockly.serialization.workspaces.save(workspace));
+}
+function save(){
+  if(!workspace)return;
+  safeSetStorage(WK,serializeWorkspace());
+  safeSetStorage(EK,JSON.stringify(execution));
+}
+function restore(){
+  try{
+    let s=safeGetStorage(WK);
+    if(s)Blockly.serialization.workspaces.load(JSON.parse(s),workspace);
+    let e=safeGetStorage(EK);
+    if(e)execution=JSON.parse(e);
+  }catch(e){console.warn(e);}
+}
+function changeLanguage(next){
+  if(running||pending||next===lang)return;
+  save();
+  const u=new URL(location.href);
+  u.searchParams.set("lang",next);
+  location.href=u.href;
+}
+$("es").onclick=()=>changeLanguage("es");
+$("en").onclick=()=>changeLanguage("en");
+
+function showOutput(){$("output").textContent=execution.output.length?execution.output.join("\n"):T.ready;}
+function log(line){execution.output.push(String(line));if(execution.output.length>MAX_OUTPUT)throw Error(T.outputError);showOutput();}
+
+function ask(question,numeric=false){
+  return new Promise((resolve,reject)=>{
+    if(pending){reject(Error("Input already open"));return;}
+    pending={resolve,reject,numeric,question:String(question)};
+    $("dialogTitle").textContent=numeric?T.promptNumber:T.promptText;
+    $("question").textContent=String(question)||(numeric?T.promptNumber:T.promptText);
+    $("answer").type="text";
+    $("answer").value="";
+    $("inputError").textContent="";
+    $("modal").hidden=false;
+    $("answer").focus();
+  });
+}
+function closeInput(ok){
+  if(!pending)return;
+  const p=pending;
+  if(ok){
+    let raw=$("answer").value,value=raw;
+    if(p.numeric){
+      if(!raw.trim()||!Number.isFinite(Number(raw.replace(",",".")))){
+        $("inputError").textContent=T.numberError;
+        return;
+      }
+      value=Number(raw.replace(",","."));
+    }
+    pending=null;
+    $("modal").hidden=true;
+    execution.inputs.push("? "+p.question+": "+String(raw));
+    p.resolve(value);
+  }else{
+    pending=null;
+    $("modal").hidden=true;
+    p.reject(Error(T.cancelError));
+  }
+}
+$("accept").onclick=()=>closeInput(true);
+$("cancel").onclick=()=>closeInput(false);
+$("answer").onkeydown=e=>{if(e.key==="Enter")closeInput(true);if(e.key==="Escape")closeInput(false);};
+
+function lock(value){
+  running=value;
+  for(const k of ["run","reset","test","copyCode","loadCode","evidence","es","en"])$(k).disabled=value;
+}
+
+function defineInputBlocks(){
+  Blockly.Blocks["lab_input_text"]={init:function(){this.appendValueInput("QUESTION").setCheck("String").appendField(T.askText);this.setOutput(true,"String");this.setColour(25);this.setTooltip(T.promptText);}};
+  Blockly.Blocks["lab_input_number"]={init:function(){this.appendValueInput("QUESTION").setCheck("String").appendField(T.askNumber);this.setOutput(true,"Number");this.setColour(25);this.setTooltip(T.promptNumber);}};
+  const g=javascript.javascriptGenerator;
+  g.forBlock["lab_input_text"]=(b,gen)=>["(await askInput("+(gen.valueToCode(b,"QUESTION",javascript.Order.NONE)||'""')+",false))",javascript.Order.ATOMIC];
+  g.forBlock["lab_input_number"]=(b,gen)=>["(await askInput("+(gen.valueToCode(b,"QUESTION",javascript.Order.NONE)||'""')+",true))",javascript.Order.ATOMIC];
+  g.forBlock["text_print"]=(b,gen)=>"printToLab("+(gen.valueToCode(b,"TEXT",javascript.Order.NONE)||'""')+");\n";
+  const callReturn=g.forBlock["procedures_callreturn"],callNoReturn=g.forBlock["procedures_callnoreturn"];
+  g.forBlock["procedures_callreturn"]=(b,gen)=>{const result=callReturn(b,gen);return ["(await "+result[0]+")",javascript.Order.ATOMIC];};
+  g.forBlock["procedures_callnoreturn"]=(b,gen)=>{const result=callNoReturn(b,gen);return result.replace(/^(\s*)/,"$1await ");};
+  g.STATEMENT_PREFIX="checkOperation();\n";
+}
+
+function initialize(){
+  defineInputBlocks();
+  const c=lang==="es"?["Lógica","Ciclos","Matemáticas","Variables","Funciones","Texto / Salida","Entrada"]:["Logic","Loops","Math","Variables","Functions","Text / Output","Input"];
+  const category=(name,style,types)=>({kind:"category",name,categorystyle:style,contents:types.map(type=>({kind:"block",type}))});
+  const toolbox={kind:"categoryToolbox",contents:[
+    category(c[0],"logic_category",["controls_if","logic_compare","logic_operation","logic_negate","logic_boolean","logic_null","logic_ternary"]),
+    category(c[1],"loop_category",["controls_repeat_ext","controls_whileUntil","controls_for","controls_forEach","controls_flow_statements"]),
+    category(c[2],"math_category",["math_number","math_arithmetic","math_single","math_trig","math_constant","math_number_property","math_round","math_modulo","math_constrain","math_random_int","math_random_float"]),
+    {kind:"category",name:c[3],categorystyle:"variable_category",custom:"VARIABLE"},
+    {kind:"category",name:c[4],categorystyle:"procedure_category",custom:"PROCEDURE"},
+    category(c[5],"text_category",["text","text_join","text_length","text_isEmpty","text_print"]),
+    {kind:"category",name:c[6],colour:"#d97706",contents:[
+      {kind:"block",type:"lab_input_text",inputs:{QUESTION:{shadow:{type:"text",fields:{TEXT:lang==="es"?"Escribe un texto":"Enter text"}}}}},
+      {kind:"block",type:"lab_input_number",inputs:{QUESTION:{shadow:{type:"text",fields:{TEXT:lang==="es"?"Escribe un número":"Enter a number"}}}}}
+    ]}
+  ]};
+  workspace=Blockly.inject("blocklyDiv",{toolbox,trashcan:true,scrollbars:true,move:{scrollbars:true,drag:true,wheel:true},zoom:{controls:true,wheel:true,startScale:1,maxScale:2,minScale:.5,scaleSpeed:1.2}});
+  restore();
+  workspace.addChangeListener(e=>{if(e.isUiEvent||running||e.type===Blockly.Events.FINISHED_LOADING)return;dirty=true;save();});
+  $("loading").hidden=true;
+  $("interface").hidden=false;
+  Blockly.svgResize(workspace);
+  showOutput();
+}
+
+const script=document.createElement("script");
+script.src="https://unpkg.com/blockly/msg/"+lang+".js";
+script.onload=initialize;
+script.onerror=()=>{$("loading").textContent="Could not load Blockly language."};
+document.head.append(script);
+
+async function runProgram(){
+  if(running)return;
+  lock(true);
+  dirty=false;
+  execution={executed:true,output:[],inputs:[],operations:0,success:false};
+  $("output").textContent="";
+  $("status").textContent=T.running;
+  const checkOperation=()=>{if(++execution.operations>MAX)throw Error(T.maxError);};
+  try{
+    let code=javascript.javascriptGenerator.workspaceToCode(workspace);
+    code=code.replace(/(^|\n)(\s*)function\s+([A-Za-z_$][\w$]*)\s*\(/g,"$1$2async function $3(");
+    const AsyncFunction=Object.getPrototypeOf(async function(){}).constructor;
+    await new AsyncFunction("printToLab","checkOperation","askInput",'"use strict";\n'+code)(log,checkOperation,ask);
+    execution.success=true;
+    if(!execution.output.length)execution.output.push(T.noOutput);
+    $("status").textContent=T.complete+" · "+execution.operations+" "+T.operations;
+  }catch(e){
+    execution.output.push(T.error+": "+e.message);
+    $("status").textContent=T.stopped+" · "+execution.operations+" "+T.operations;
+  }finally{
+    showOutput();
+    save();
+    lock(false);
+  }
+}
+
+function executeReset(){
+  workspace.clear();
+  execution={executed:false,output:[],inputs:[],operations:0,success:false};
+  dirty=false;
+  safeRemoveStorage(WK);
+  safeRemoveStorage(EK);
+  showOutput();
+  $("status").textContent=T.resetDone;
+}
+
+$("run").onclick=runProgram;
+$("test").onclick=async()=>{if(running)return;try{const v=await ask(T.testQuestion,false);$("status").textContent=T.testSuccess+": "+v;}catch(e){$("status").textContent=e.message;}};
+$("clear").onclick=()=>{$("output").textContent="";execution.output=[];save();$("status").textContent=T.cleared;};
+$("reset").onclick=()=>{
+  if(running)return;
+  if(workspace.getAllBlocks(false).length>0){
+    $("resetModal").hidden=false;
+  }else{
+    executeReset();
+  }
+};
+$("resetCancelBtn").onclick=()=>{$("resetModal").hidden=true;};
+$("resetConfirmBtn").onclick=()=>{
+  $("resetModal").hidden=true;
+  executeReset();
+};
+
+async function copyTextToClipboard(text){
+  try{
+    await navigator.clipboard.writeText(text);
+    return true;
+  }catch(e){
+    const ta=document.createElement("textarea");
+    ta.value=text;
+    document.body.append(ta);
+    ta.select();
+    try{document.execCommand("copy");}catch(err){}
+    ta.remove();
+    return true;
+  }
+}
+
+$("copyCode").onclick=async()=>{
+  if(!workspace||!workspace.getAllBlocks(false).length){$("status").textContent=T.empty;return;}
+  const data=serializeWorkspace();
+  await copyTextToClipboard(data);
+  $("status").textContent=T.codeCopied;
+};
+
+$("loadCode").onclick=()=>{
+  if(running)return;
+  $("codeInput").value="";
+  $("codeError").textContent="";
+  $("codeModal").hidden=false;
+  $("codeInput").focus();
+};
+$("codeCancelBtn").onclick=()=>{$("codeModal").hidden=true;};
+$("codeLoadConfirmBtn").onclick=()=>{
+  const raw=$("codeInput").value.trim();
+  if(!raw){$("codeError").textContent=T.codeLoadError;return;}
+  try{
+    const parsed=JSON.parse(raw);
+    Blockly.serialization.workspaces.load(parsed,workspace);
+    dirty=true;
+    save();
+    $("codeModal").hidden=true;
+    $("status").textContent=T.codeLoadedOK;
+  }catch(e){
+    $("codeError").textContent=T.codeLoadError;
+  }
+};
+
+function structures(){
+  const t=workspace.getAllBlocks(false).map(b=>b.type);
+  return [[T.variables,t.some(x=>x.startsWith("variables_"))],[T.conditionals,t.includes("controls_if")],[T.loops,t.some(x=>["controls_repeat_ext","controls_whileUntil","controls_for","controls_forEach"].includes(x))],[T.functions,t.some(x=>x.startsWith("procedures_"))]];
+}
+function wrapped(ctx,str,width){
+  let out=[];
+  for(const para of String(str).split("\n")){
+    if(!para){out.push("");continue;}
+    let line="";
+    for(const word of para.split(" ")){
+      const s=line?line+" "+word:word;
+      if(ctx.measureText(s).width>width&&line){out.push(line);line=word;}else line=s;
+    }
+    out.push(line);
+  }
+  return out;
+}
+function imageFromSvg(svg){
+  return new Promise((resolve,reject)=>{
+    const blob=new Blob([new XMLSerializer().serializeToString(svg)],{type:"image/svg+xml;charset=utf-8"}),url=URL.createObjectURL(blob),im=new Image();
+    im.onload=()=>{URL.revokeObjectURL(url);resolve(im)};
+    im.onerror=()=>{URL.revokeObjectURL(url);reject(Error("SVG export failed"))};
+    im.src=url;
+  });
+}
+async function blockImage(block){
+  const root=block.getSvgRoot(),box=root.getBBox(),pad=18,w=Math.ceil(box.width+pad*2),h=Math.ceil(box.height+pad*2),clone=root.cloneNode(true);
+  const a=[root,...root.querySelectorAll("*")],b=[clone,...clone.querySelectorAll("*")];
+  for(let i=0;i<a.length;i++){
+    const s=getComputedStyle(a[i]);
+    for(const p of ["fill","fill-opacity","stroke","stroke-width","stroke-opacity","font-family","font-size","font-weight","font-style","opacity","display"])b[i].style.setProperty(p,s.getPropertyValue(p));
+  }
+  clone.removeAttribute("transform");
+  const ns="http://www.w3.org/2000/svg",svg=document.createElementNS(ns,"svg");
+  svg.setAttribute("xmlns",ns);svg.setAttribute("xmlns:xlink","http://www.w3.org/1999/xlink");
+  svg.setAttribute("width",w);svg.setAttribute("height",h);
+  svg.setAttribute("viewBox",`${box.x-pad} ${box.y-pad} ${w} ${h}`);
+  const rect=document.createElementNS(ns,"rect");
+  for(const [k,v] of Object.entries({x:box.x-pad,y:box.y-pad,width:w,height:h,fill:"white"}))rect.setAttribute(k,v);
+  svg.append(rect,clone);
+  return {image:await imageFromSvg(svg),width:w,height:h};
+}
+async function compactImage(){
+  const blocks=workspace.getTopBlocks(true);
+  if(!blocks.length)throw Error(T.empty);
+  const groups=await Promise.all(blocks.map(blockImage));
+  const width=1100,pad=35,gap=25;
+  let height=pad;
+  const layout=groups.map(g=>{let scale=Math.min(1,(width-2*pad)/g.width),w=g.width*scale,h=g.height*scale;height+=h+gap;return {...g,w,h};});
+  height+=pad-gap;
+  const cv=document.createElement("canvas");cv.width=width;cv.height=Math.ceil(height);
+  const cx=cv.getContext("2d");cx.fillStyle="white";cx.fillRect(0,0,width,height);
+  let y=pad;
+  for(const g of layout){cx.drawImage(g.image,(width-g.w)/2,y,g.w,g.h);y+=g.h+gap;}
+  return cv;
+}
+
+function triggerDownload(blob){
+  const url=URL.createObjectURL(blob),a=document.createElement("a");
+  const suffix=qId!=="default"?"_ej"+qId:"";
+  a.href=url;
+  a.download="evidencia_solucion"+suffix+"_"+new Date().toISOString().replace(/[:.]/g,"-")+".png";
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),3000);
+}
+
+async function generateEvidence(){
+  if(running)return;
+  $("evidence").disabled=true;
+  $("status").textContent=T.generating;
+  $("evFeedback").textContent="";
+  try{
+    const alg=await compactImage(),W=1400,p=80,content=W-2*p,scale=Math.min(1,content/alg.width),ah=alg.height*scale;
+    const measure=document.createElement("canvas").getContext("2d");
+    measure.font='20px Consolas, monospace';
+    const inputLines=wrapped(measure,execution.inputs.length?execution.inputs.join("\n"):(execution.executed?"":T.notRun),content);
+    const outputLines=wrapped(measure,execution.executed?(execution.output.join("\n")||T.noOutput):T.notRun,content);
+    const lineHeight=30,H=Math.ceil(240+ah+75+Math.max(1,inputLines.length)*lineHeight+80+Math.max(1,outputLines.length)*lineHeight+330);
+    const cv=document.createElement("canvas");cv.width=W;cv.height=H;
+    const ctx=cv.getContext("2d");
+    ctx.fillStyle="white";ctx.fillRect(0,0,W,H);
+    ctx.fillStyle="#202124";ctx.font="bold 38px Arial";ctx.fillText(T.title,p,60);
+    ctx.font="20px Arial";ctx.fillStyle="#5f6368";ctx.fillText(T.evidenceTitle+(qId!=="default"?" · Ejercicio "+qId:""),p,98);
+    ctx.font="bold 17px Arial";ctx.fillStyle="#202124";ctx.fillText("PrepaTec Campus Hidalgo",p,130);
+    ctx.textAlign="right";ctx.fillText("v"+VERSION,W-p,60);ctx.textAlign="left";
+    ctx.strokeStyle="#dadce0";ctx.beginPath();ctx.moveTo(p,157);ctx.lineTo(W-p,157);ctx.stroke();
+    let y=190;ctx.font="bold 23px Arial";ctx.fillText(T.algorithm,p,y);y+=25;
+    ctx.fillStyle="#f8f9fa";ctx.fillRect(p,y,content,ah+36);
+    ctx.drawImage(alg,p+(content-alg.width*scale)/2,y+18,alg.width*scale,ah);y+=ah+75;
+    function section(title,lines){
+      ctx.fillStyle="#202124";ctx.font="bold 23px Arial";ctx.fillText(title,p,y);y+=40;
+      ctx.font='20px Consolas, monospace';
+      for(const l of lines){ctx.fillText(l,p,y);y+=lineHeight;}
+      y+=35;
+    }
+    section(T.input,inputLines.length?inputLines:[""]);
+    section(T.output,outputLines.length?outputLines:[""]);
+    ctx.strokeStyle="#dadce0";ctx.beginPath();ctx.moveTo(p,y-15);ctx.lineTo(W-p,y-15);ctx.stroke();
+    ctx.fillStyle="#202124";ctx.font="bold 23px Arial";ctx.fillText(T.structures,p,y+20);y+=60;
+    for(const [name,used] of structures()){
+      ctx.font="19px Arial";ctx.fillText(name,p,y);
+      ctx.font="bold 19px Arial";ctx.fillText(used?T.yes:T.no,p+270,y);
+      y+=33;
+    }
+    y+=15;ctx.font="17px Arial";ctx.fillStyle="#5f6368";
+    ctx.fillText((execution.executed?(execution.success?T.complete:T.stopped):T.notRun)+(execution.executed?" · "+execution.operations+" "+T.operations:""),p,y);
+    if(dirty){y+=25;ctx.fillStyle="#b3261e";ctx.fillText(T.modified,p,y);}
+    ctx.fillStyle="#5f6368";ctx.font="15px Arial";
+    ctx.fillText(T.generated+": "+new Date().toLocaleString(lang==="es"?"es-MX":"en-US")+" · "+T.authors,p,H-32);
+    ctx.textAlign="right";ctx.fillText("PrepaTec Campus Hidalgo · v"+VERSION,W-p,H-32);
+    const blob=await new Promise(resolve=>cv.toBlob(resolve,"image/png"));
+    if(!blob)throw Error("PNG export failed");
+    lastEvidenceBlob=blob;
+    if(lastEvidenceUrl)URL.revokeObjectURL(lastEvidenceUrl);
+    lastEvidenceUrl=URL.createObjectURL(blob);
+    $("evPreviewImg").src=lastEvidenceUrl;
+    $("evBackupInput").value=serializeWorkspace();
+    $("evidenceModal").hidden=false;
+    try{triggerDownload(blob);}catch(err){console.warn(err);}
+    $("status").textContent=T.generatedOK;
+  }catch(e){
+    console.error(e);
+    $("status").textContent=T.generateError+" "+e.message;
+  }finally{
+    $("evidence").disabled=false;
+  }
+}
+
+$("evidence").onclick=generateEvidence;
+$("evDownloadBtn").onclick=()=>{if(lastEvidenceBlob)triggerDownload(lastEvidenceBlob);};
+$("evCloseBtn").onclick=()=>{$("evidenceModal").hidden=true;};
+$("evCopyBackupBtn").onclick=async()=>{
+  await copyTextToClipboard($("evBackupInput").value);
+  $("evFeedback").style.color="#188038";
+  $("evFeedback").textContent=T.codeCopied;
+  $("status").textContent=T.codeCopied;
+};
+$("evCopyImgBtn").onclick=async()=>{
+  if(!lastEvidenceBlob)return;
+  try{
+    await navigator.clipboard.write([new ClipboardItem({"image/png":lastEvidenceBlob})]);
+    $("evFeedback").style.color="#188038";
+    $("evFeedback").textContent=T.evImgCopied;
+    $("status").textContent=T.evImgCopied;
+  }catch(e){
+    $("evFeedback").style.color="#b3261e";
+    $("evFeedback").textContent=T.evImgCopyError;
+    $("status").textContent=T.evImgCopyError;
+  }
+};
+</script></body></html>
